@@ -17,7 +17,7 @@ if not do_watch then
 	end
 else
 	print("now watching")
-	pathfs.watchDirectories({ "plugin/src" }, function()
+	pathfs.watchDirectories({ "src" }, function()
 		build_plugin.build()
 		if do_install then
 			build_plugin.install()
