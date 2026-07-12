@@ -18,9 +18,10 @@ const function exec_and_await(args: { string }, options: process.ProcessRunOptio
 end
 
 function build(): path.Pathlike?
-	if fs.type(DIST) == "dir" then
+	if fs.exists(DIST) and fs.type(DIST) == "dir" then
 		fs.removeDirectory(DIST, { recursive = true })
 	end
+	fs.createDirectory(DIST)
 
 	print(rt.dim "installing dependencies")
 	local result = exec_and_await({ "pesde", "install" }, {
