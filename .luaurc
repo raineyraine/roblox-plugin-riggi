@@ -4,7 +4,7 @@
 		"assets": "./assets/plugin",
 		"luau_pkgs": "luau_packages",
 		"lute": "~/.lute/typedefs/1.0.1/lute",
-		"batteries": "./.lune/vendor/batteries",
+		"batteries": "./.lute/vendor/batteries",
 		"plugin": "src",
 		"std": "~/.lute/typedefs/1.0.1/std",
 		"lune": "~/.lune/.typedefs/0.10.4/",

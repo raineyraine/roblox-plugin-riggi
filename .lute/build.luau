@@ -1,15 +1,14 @@
 --!strict
 
-local process = require "@lune/process"
+const process = require "@lute/process"
+const lute_fs = require "@lute/fs"
 
-local pathfs = require "@lune_pkgs/pathfs"
+const cli = require "@batteries/cli"
+const rt = require "@batteries/richterm"
 
-local cli = require "@batteries/cli"
-local rt = require "@batteries/richterm"
+const build_plugin = require "./lib/build-plugin"
 
-local build_plugin = require "./lib/build_plugin"
-
-local args = cli.parser()
+const args = cli.parser()
 args:add("install", "flag", {
 	help = "Install to the Studio plugin folder automatically.",
 	aliases = { "i" },
@@ -38,12 +37,18 @@ if not args:has("watch") then
 	end
 else
 	print("now watching")
-	pathfs.watchDirectories({ "src" }, function()
+
+	const function step()
 		if args:has("install") then
 			build_plugin.install()
 		else
 			build_plugin.build()
 		end
 		print(rt.dim("Awaiting file change.."))
+	end
+
+	step()
+	lute_fs.watch("src", function()
+		step()
 	end)
 end
