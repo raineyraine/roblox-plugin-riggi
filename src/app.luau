@@ -7,7 +7,9 @@ local mount = vide.mount
 
 local keys = require "./keys"
 local main_app = require "./components/main"
-local state = require "./state"
+
+local store = require "@plugin/store"
+local state = store.state
 
 local function app(plugin: Plugin)
 	local plugin_toolbar = plugin:CreateToolbar("Riggi Plugin")
@@ -17,6 +19,7 @@ local function app(plugin: Plugin)
 		DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 100, 100, 100, 100)
 	)
 	main_widget.Name = "riggi_plugin_main_widget"
+	main_widget.Title = "Riggi"
 
 	state.open(main_widget.Enabled)
 

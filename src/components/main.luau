@@ -14,15 +14,19 @@ local background = require "./core/background"
 local button = require "./core/button"
 local padding = require "./core/padding"
 
+local store = require "@plugin/store"
+local state = store.state
+local actions = store.actions
+
 local assets = require "@assets"
 
 local FOLDER_NAME = "riggi_plugin_loaded"
 
-local function import(material: Enum.Material?, use_folder: boolean)
+local function import(material: Enum.Material?, useFolder: boolean, noFix: boolean?)
 	local folder = Workspace:FindFirstChild(FOLDER_NAME)
 	local offset = 0
 
-	if use_folder then
+	if useFolder then
 		if not folder then
 			folder = Instance.new("Folder")
 			folder.Name = FOLDER_NAME
@@ -32,7 +36,7 @@ local function import(material: Enum.Material?, use_folder: boolean)
 		offset = #(folder :: Folder):GetChildren()
 	end
 
-	local origin = if Workspace.CurrentCamera and not use_folder then Workspace.CurrentCamera.CFrame else CFrame.new()
+	local origin = if Workspace.CurrentCamera and not useFolder then Workspace.CurrentCamera.CFrame else CFrame.new()
 
 	local files = StudioService:PromptImportFilesAsync({ "txt", "json" })
 	for i, file in files do
@@ -44,10 +48,12 @@ local function import(material: Enum.Material?, use_folder: boolean)
 		local clone = assets.r6_rig:Clone()
 		clone:PivotTo(origin * CFrame.new(-5 * (i - 1 + offset), 0, 0))
 		clone.Name = string.gsub(file.Name, "%.[^%.]+$", "") .. `{if material then ` ({material.Name})` else ""}`
-		clone.Parent = if use_folder then folder else Workspace
+		clone.Parent = if useFolder then folder else Workspace
 
 		perdere_loader.load_to_rig(clone, decoded)
-		rig_cleaner.clean_rig(clone, material)
+		if not noFix then
+			rig_cleaner.clean_rig(clone, material)
+		end
 	end
 	ChangeHistoryService:SetWaypoint("loaded rigs")
 end
@@ -94,6 +100,14 @@ return function(plugin: Plugin)
 		button {
 			primary = false,
 			activated = function()
+				import(nil, true, true)
+			end,
+			text = "dev_import_no_fix",
+			layout = { LayoutOrder = 3.1 },
+		},
+		button {
+			primary = false,
+			activated = function()
 				local folder = Workspace:FindFirstChild(FOLDER_NAME) :: Folder
 				if not folder then
 					folder = Instance.new("Folder")
@@ -107,6 +121,20 @@ return function(plugin: Plugin)
 			end,
 			text = "Clear rig folder",
 			layout = { LayoutOrder = 4 },
+		},
+		button {
+			primary = true,
+			activated = function()
+				local files = StudioService:PromptImportFilesAsync({ "txt", "json" })
+				for i, file in files do
+					if not file:IsA("File") then
+						continue
+					end
+					actions.set_outfit(string.gsub(file.Name, "%.[^%.]+$", ""), file:GetBinaryContents())
+				end
+			end,
+			text = "dev open_gui",
+			layout = { LayoutOrder = 5 },
 		},
 	}
 end

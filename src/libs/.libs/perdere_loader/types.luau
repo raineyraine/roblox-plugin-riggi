@@ -48,7 +48,7 @@ export type AccessoryData = {
 
 	-- weld
 	WeldC1Position: JSONVector3?,
-	WeldC1Rotation: JSONVector3?,
+	WeldC1Rotation: string?,
 }
 
 export type PresetData = {

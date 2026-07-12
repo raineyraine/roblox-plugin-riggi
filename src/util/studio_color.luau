@@ -11,9 +11,12 @@ local studio = settings():GetService("Studio")
 
 type Can<T> = types.Can<T>
 
-export type StudioColor =
+export type StudioColorHook =
 	((color: Can<studio_types.StudioColors>, modifier: Can<studio_types.StudioModifiers>?) -> () -> Color3)
 	& (() -> string)
+
+export type StudioColors = studio_types.StudioColors
+export type StudioModifiers = studio_types.StudioModifiers
 
 local theme = source() :: vide.Source<StudioTheme>
 local function update_theme()
@@ -42,4 +45,4 @@ local function studio_color(
 	end
 end
 
-return studio_color :: StudioColor
+return studio_color :: StudioColorHook

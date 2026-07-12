@@ -9,6 +9,9 @@ local keys = {
 		main_button = key "button.main",
 		main_widget = key "widget.main",
 	},
+	saved_state = {
+		presets = "presets",
+	},
 }
 
 return keys

@@ -13,6 +13,7 @@ local function clean_rig(rig: Model, material_to_use: Enum.Material?)
 			local weld = handle:FindFirstChildOfClass("Weld")
 			local Size = mesh.Scale
 			local Offset = mesh.Offset
+			local oldCFrame = handle.CFrame
 
 			local mp = AssetService:CreateMeshPartAsync(Content.fromUri(mesh.MeshId))
 			mp.Material = if material_to_use then material_to_use else handle.Material
@@ -33,11 +34,12 @@ local function clean_rig(rig: Model, material_to_use: Enum.Material?)
 
 			local part_1 = weld.Part1
 			local other_attachment = part_1:FindFirstChild(attachment.Name) :: Attachment
-			mp.CFrame = (
-				(other_attachment :: any).Parent.CFrame
-				* other_attachment.CFrame
-				* attachment.CFrame:Inverse()
-			) + Offset
+			-- mp.CFrame = (
+			-- 	(other_attachment :: any).Parent.CFrame
+			-- 	* other_attachment.CFrame
+			-- 	* attachment.CFrame:Inverse()
+			-- ) + Offset
+			mp.CFrame = handle.CFrame
 
 			v.Parent = nil
 		end

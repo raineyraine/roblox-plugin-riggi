@@ -137,16 +137,13 @@ function lib.load_to_rig(character: Model, data: PresetData)
 		task.defer(function()
 			-- upstream_change types
 			-- local weld = handle:FindFirstChild("AccessoryWeld")
-			local weld = handle:FindFirstChild("AccessoryWeld") :: Weld
+			local weld = handle:WaitForChild("AccessoryWeld", 5) :: Weld
 			-- upstream_change end
 			if weld and accessory.WeldC1Position and accessory.WeldC1Rotation then
 				local pos = json_vec3_to_vec3(accessory.WeldC1Position)
 
-				-- upstream_change idk what happened here
-				-- local x, y, z = string.match(accessory.WeldC1Rotation, "([^,]+),([^,]+),([^,]+)")
-				-- x, y, z = tonumber(x), tonumber(y), tonumber(z)
-				local x, y, z = accessory.WeldC1Rotation.X, accessory.WeldC1Rotation.Y, accessory.WeldC1Rotation.Z
-				-- upstream_change end
+				local x, y, z = string.match(accessory.WeldC1Rotation, "([^,]+),([^,]+),([^,]+)")
+				x, y, z = tonumber(x), tonumber(y), tonumber(z :: string)
 
 				if x and y and z then
 					weld.C1 = CFrame.new(pos) * CFrame.Angles(math.rad(x), math.rad(y), math.rad(z))
