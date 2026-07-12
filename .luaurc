@@ -1,11 +1,16 @@
 {
 	"languageMode": "strict",
 	"aliases": {
-		"lune": "~/.lune/.typedefs/0.10.4/",
-		"pkgs": "roblox_packages",
-		"luau_pkgs": "luau_packages",
-		"lune_pkgs": "lune_packages",
 		"assets": "./assets/plugin",
-		"plugin": "src"
+		"luau_pkgs": "luau_packages",
+		"lute": "~/.lute/typedefs/1.0.1/lute",
+		"batteries": "./.lune/vendor/batteries",
+		"plugin": "src",
+		"std": "~/.lute/typedefs/1.0.1/std",
+		"lune": "~/.lune/.typedefs/0.10.4/",
+		"lint": "@std/commands/lint/types",
+		"transform": "@std/commands/transform/types",
+		"lune_pkgs": "lune_packages",
+		"pkgs": "roblox_packages"
 	}
 }

@@ -4,13 +4,34 @@ local process = require "@lune/process"
 
 local pathfs = require "@lune_pkgs/pathfs"
 
+local cli = require "@batteries/cli"
+local rt = require "@batteries/richterm"
+
 local build_plugin = require "./lib/build_plugin"
 
-local do_install = table.find(process.args, "-i") or table.find(process.args, "--install")
-local do_watch = table.find(process.args, "-w") or table.find(process.args, "--watch")
+local args = cli.parser()
+args:add("install", "flag", {
+	help = "Install to the Studio plugin folder automatically.",
+	aliases = { "i" },
+})
+args:add("watch", "flag", {
+	help = "Watch for changes.",
+	aliases = { "w" },
+})
+args:add("help", "flag", {
+	help = "Show help.",
+	aliases = { "h" },
+})
 
-if not do_watch then
-	if do_install then
+args:parse(process.args)
+
+if args:has("help") then
+	args:help()
+	process.exit(0)
+end
+
+if not args:has("watch") then
+	if args:has("install") then
 		build_plugin.install()
 	else
 		build_plugin.build()
@@ -18,9 +39,11 @@ if not do_watch then
 else
 	print("now watching")
 	pathfs.watchDirectories({ "src" }, function()
-		build_plugin.build()
-		if do_install then
+		if args:has("install") then
 			build_plugin.install()
+		else
+			build_plugin.build()
 		end
+		print(rt.dim("Awaiting file change.."))
 	end)
 end
