@@ -22,10 +22,10 @@ jobs:
         run: |
           pesde install
 
-      - name: Setup lune
+      - name: Setup lute
         run: |
-          lune setup
+          lute setup
 
       - name: Build
         run: |
-          lune run build
+          lute run build
