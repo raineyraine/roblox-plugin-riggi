@@ -15,12 +15,22 @@ local function clean_rig(rig: Model, material_to_use: Enum.Material?)
 			local Offset = mesh.Offset
 			local oldCFrame = handle.CFrame
 
-			local mp = AssetService:CreateMeshPartAsync(Content.fromUri(mesh.MeshId))
+			local success, mp: MeshPart = pcall(function()
+				return AssetService:CreateMeshPartAsync(Content.fromUri(mesh.MeshId))
+			end)
+			if not success then
+				warn(`Failed to make MeshPart for accessory {v.Name}`)
+				continue
+			end
 			mp.Material = if material_to_use then material_to_use else handle.Material
 			mp.Color = handle.Color
 			mp.Reflectance = handle.Reflectance
 			mp.Transparency = handle.Transparency
 			mp.TextureID = mesh.TextureId
+			-- TODO: proper support for this
+			if mp.TextureID == "rbxassetid://0" or mp.TextureID == "rbxassetid://1" then
+				mp.TextureID = ""
+			end
 			mp.Name = v.Name
 			mp.Anchored = true
 			mp.Parent = weld.Part1
