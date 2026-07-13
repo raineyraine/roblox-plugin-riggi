@@ -17,6 +17,10 @@ jobs:
       - name: Setup rokit
         uses: CompeyDev/setup-rokit@v0.2.1
 
+      - name: Install dependencies
+        run: |
+          pesde install
+
       - name: Setup lute
         run: |
           lute setup
