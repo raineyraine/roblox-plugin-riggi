@@ -15,7 +15,7 @@ type PortalProps = {
 	--- controls if the portal should inherit the layout of the frame it's under
 	inherit_layout: Can<boolean>?,
 
-	[number]: Instance,
+	[number]: any,
 }
 
 local layout = 100_000
