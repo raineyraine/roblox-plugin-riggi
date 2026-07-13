@@ -1,0 +1,69 @@
+diff --git a/src/create.luau b/src/create.luau
+index db33663..120d17d 100644
+--- a/src/create.luau
++++ b/src/create.luau
+@@ -52,7 +52,7 @@ local function create(class_or_instance: string|Instance, properties: { [unknown
+         else constructor
+ end
+ 
+-type Instances = {
++export type Instances = {
+     Folder: Folder,
+     BillboardGui: BillboardGui,
+     CanvasGroup: CanvasGroup,
+@@ -70,11 +70,23 @@ type Instances = {
+     UIGradient: UIGradient,
+     UIGridLayout: UIGridLayout,
+     UIListLayout: UIListLayout,
++    UISizeConstraint: UISizeConstraint,
++    UITextSizeConstraint: UITextSizeConstraint,
++    UIScale: UIScale,
++    UIPadding: UIPadding,
++    UIStroke: UIStroke,
++    UIFlexItem: UIFlexItem,
++    UIPageLayout: UIPageLayout,
++    UITableLayout: UITableLayout,
++    VideoFrame: VideoFrame,
++    ViewportFrame: ViewportFrame,
++    ProximityPrompt: ProximityPrompt,
++    UIDragDetector: UIDragDetector,
+     Camera: Camera,
+     WorldModel: WorldModel,
+ }
+ 
+-type function Properties(instance: type?)
++export type function Properties(instance: type?)
+     local properties = types.newtable()
+ 
+     while instance do
+diff --git a/src/init.luau b/src/init.luau
+index 11d1bd2..e597029 100644
+--- a/src/init.luau
++++ b/src/init.luau
+@@ -1,10 +1,12 @@
+ assert(game, "when using vide outside of Roblox, require lib.luau instead")
+ 
+-local vide = require(script.lib)
++local vide = require "@self/lib"
+ 
+ export type source<T> = vide.source<T>
+ export type Source<T> = vide.Source<T>
+ export type context<T> = vide.context<T>
+ export type Context<T> = vide.Context<T>
++export type Instances = vide.Instances
++export type Properties<Inst> = vide.Properties<Inst>
+ 
+ return vide
+diff --git a/src/lib.luau b/src/lib.luau
+index 671f1c6..aabaeb5 100644
+--- a/src/lib.luau
++++ b/src/lib.luau
+@@ -27,6 +27,8 @@ export type Source<T> = source.Source<T>
+ export type source<T> = Source<T>
+ export type Context<T> = context.Context<T>
+ export type context<T> = Context<T>
++export type Instances = create.Instances
++export type Properties<Inst> = create.Properties<Inst>
+ 
+ local function step(dt: number)
+     if game then debug.profilebegin("VIDE STEP") end

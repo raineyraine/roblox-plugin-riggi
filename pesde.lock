@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 format = 2
 name = "raineyraine/riggi_plugin"
-version = "0.1.2"
+version = "0.2.1"
 target = "roblox"
 
 [graph."0x5eal/unzip@0.2.1 luau".pkg_ref]
@@ -16,13 +16,13 @@ frktest = [{ name = "itsfrank/frktest", version = "^0.0.4", index = "https://git
 luau-lsp = [{ name = "pesde/luau_lsp", version = "=1.66.1", index = "https://github.com/pesde-pkg/index", target = "lune" }, "dev"]
 stylua = [{ name = "pesde/stylua", version = "=2.4.1", index = "https://github.com/pesde-pkg/index", target = "lune" }, "dev"]
 
-[graph."centau/vide@0.0.0-242a44838807170ca4a4905a277139dd8cee37d1 roblox"]
-direct = ["vide", { repo = "https://github.com/centau/vide", rev = "19eaeb4" }, "standard"]
+[graph."centau/vide@0.0.0-8890f5044158a71592249e2d91646715b98ca4aa roblox"]
+direct = ["vide", { repo = "https://github.com/centau/vide", rev = "0.4.1" }, "standard"]
 
-[graph."centau/vide@0.0.0-242a44838807170ca4a4905a277139dd8cee37d1 roblox".pkg_ref]
+[graph."centau/vide@0.0.0-8890f5044158a71592249e2d91646715b98ca4aa roblox".pkg_ref]
 ref_ty = "git"
 repo = "https://github.com/centau/vide"
-tree_id = "242a44838807170ca4a4905a277139dd8cee37d1"
+tree_id = "8890f5044158a71592249e2d91646715b98ca4aa"
 new_structure = true
 
 [graph."jiwonz/dirs@0.6.0 lune".dependencies]
@@ -54,9 +54,6 @@ index_url = "https://github.com/pesde-pkg/index"
 
 [graph."jiwonz/luau_path@0.2.0 luau".pkg_ref.dependencies]
 luau_disk = [{ name = "jiwonz/luau_disk", version = "^0.2.0", index = "https://github.com/pesde-pkg/index" }, "standard"]
-
-[graph."jiwonz/pathfs@0.6.0 lune"]
-direct = ["pathfs", { name = "jiwonz/pathfs", version = "^0.6.0", index = "default", target = "lune" }, "dev"]
 
 [graph."jiwonz/pathfs@0.6.0 lune".dependencies]
 greentea = ["jiwonz/greentea_luau@0.2.0 luau", "standard"]

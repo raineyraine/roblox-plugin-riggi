@@ -4,8 +4,7 @@ name = "raineyraine/riggi_plugin"
 version = "0.2.1"
 
 [dependencies]
-vide = { repo = "centau/vide", rev = "19eaeb4" }
-
+vide = { repo = "centau/vide", rev = "0.4.1" }
 [dev_dependencies]
 rojo = { name = "pesde/rojo", target = "lune", version = "^7.5.1" }
 scripts = { name = "pesde/scripts_rojo", target = "lune", version = "^0.2.0" }
@@ -17,9 +16,6 @@ lune = "^0.10.2"
 [indices]
 default = "https://github.com/pesde-pkg/index"
 
-[patches."centau/vide"]
-"0.0.0-242a44838807170ca4a4905a277139dd8cee37d1 roblox" = "patches/centau+vide-0.0.0-242a44838807170ca4a4905a277139dd8cee37d1+roblox.patch"
-
 [scripts]
 roblox_sync_config_generator = ".pesde/scripts/roblox_sync_config_generator.luau"
 sourcemap_generator = ".pesde/scripts/sourcemap_generator.luau"
@@ -29,3 +25,6 @@ environment = "roblox"
 
 [wally_indices]
 default = "https://github.com/UpliftGames/wally-index"
+
+[patches]
+"centau/vide" = { "0.0.0-8890f5044158a71592249e2d91646715b98ca4aa roblox" = "patches/centau+vide-0.0.0-8890f5044158a71592249e2d91646715b98ca4aa+roblox.patch" }
