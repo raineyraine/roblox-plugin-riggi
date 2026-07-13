@@ -34,3 +34,5 @@ jobs:
         with:
           working_directory: plugin
           files: plugin.rbxm
+          generate_release_notes: true
+          draft: true
