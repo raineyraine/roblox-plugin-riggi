@@ -1,17 +1,19 @@
 --!strict
 
-local vide = require "@pkgs/vide"
-local source = vide.source
+const vide = require "@pkgs/vide"
+const source = vide.source
 
-local keys = require "./keys"
+const keys = require "./keys"
 
 type Map<Key, Value> = { [Key]: Value }
+type Array<Value> = { Value }
 
 local state = {
 	open = source(false),
 	settings = {},
 	outfits = source({} :: Map<string, string>),
 	plugin = source((nil :: any) :: Plugin),
+	selected_outfits = source({} :: Array<string>),
 }
 
 local actions = {}

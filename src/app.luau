@@ -1,17 +1,17 @@
 --!strict
 
-local vide = require "@pkgs/vide"
-local cleanup = vide.cleanup
-local effect = vide.effect
-local mount = vide.mount
+const vide = require "@pkgs/vide"
+const cleanup = vide.cleanup
+const effect = vide.effect
+const mount = vide.mount
 
-local keys = require "./keys"
-local main_app = require "./components/main"
+const keys = require "./keys"
+const main_app = require "./components/main"
 
-local store = require "@plugin/store"
-local state = store.state
+const store = require "@plugin/store"
+const state = store.state
 
-local function app(plugin: Plugin)
+const function app(plugin: Plugin)
 	local plugin_toolbar = plugin:CreateToolbar("Riggi Plugin")
 	local main_button = plugin_toolbar:CreateButton(keys.plugin.main_button, "Open/close the Riggi plugin", "", "Riggi")
 	local main_widget = plugin:CreateDockWidgetPluginGuiAsync(

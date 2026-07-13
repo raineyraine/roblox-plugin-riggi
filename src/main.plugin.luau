@@ -1,14 +1,14 @@
 --!strict
 
-local vide = require "@pkgs/vide"
-local root = vide.root
+const vide = require "@pkgs/vide"
+const root = vide.root
 
-local store = require "./store"
-local state = store.state
+const store = require "./store"
+const state = store.state
 store.state.plugin(plugin) -- important!
 
-local app = require "./app"
-local keys = require "./keys"
+const app = require "./app"
+const keys = require "./keys"
 
 vide.defaults = true
 
