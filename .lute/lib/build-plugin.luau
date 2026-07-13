@@ -23,15 +23,19 @@ function build(): path.Pathlike?
 	end
 	fs.createDirectory(DIST)
 
-	print(rt.dim "installing dependencies")
-	local result = exec_and_await({ "pesde", "install" }, {
-		stdio = "inherit",
-	})
-	if result.ok then
-		print(rt.green "installed dependencies!\n")
-	else
-		print(rt.red "failed to install dependencies!\n")
-		return nil
+	local result: process.ProcessResult
+
+	if not fs.exists("roblox_packages") then
+		print(rt.dim "installing dependencies")
+		result = exec_and_await({ "pesde", "install" }, {
+			stdio = "inherit",
+		})
+		if result.ok then
+			print(rt.green "installed dependencies!\n")
+		else
+			print(rt.red "failed to install dependencies!\n")
+			return nil
+		end
 	end
 
 	print(rt.dim "generating sourcemap")

@@ -1,7 +1,7 @@
 --!strict
 
 const process = require "@lute/process"
-const lute_fs = require "@lute/fs"
+const fs = require "@std/fs"
 
 const cli = require "@batteries/cli"
 const rt = require "@batteries/richterm"
@@ -48,7 +48,14 @@ else
 	end
 
 	step()
-	lute_fs.watch("src", function()
+
+	const watcher = fs.watch("src")
+
+	while true do
+		const event = watcher:next()
+		if not event then
+			continue
+		end
 		step()
-	end)
+	end
 end
