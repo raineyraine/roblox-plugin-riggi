@@ -8,7 +8,6 @@ const Workspace = game:GetService "Workspace"
 
 const vide = require "@pkgs/vide"
 const source = vide.source
-const action = vide.action
 const effect = vide.effect
 
 const perdere_loader = require "@plugin/libs/perdere_loader"
