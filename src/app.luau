@@ -16,10 +16,11 @@ const function app(plugin: Plugin)
 	local main_button = plugin_toolbar:CreateButton(keys.plugin.main_button, "Open/close the Riggi plugin", "", "Riggi")
 	local main_widget = plugin:CreateDockWidgetPluginGuiAsync(
 		keys.plugin.main_widget,
-		DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 100, 100, 100, 100)
+		DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 200, 400, 200, 400)
 	)
 	main_widget.Name = "riggi_plugin_main_widget"
 	main_widget.Title = "Riggi"
+	main_widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 	state.open(main_widget.Enabled)
 

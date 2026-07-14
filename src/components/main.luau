@@ -8,6 +8,8 @@ const Workspace = game:GetService "Workspace"
 
 const vide = require "@pkgs/vide"
 const source = vide.source
+const action = vide.action
+const effect = vide.effect
 
 const perdere_loader = require "@plugin/libs/perdere_loader"
 const rig_cleaner = require "@plugin/libs/rig_cleaner"
@@ -15,21 +17,34 @@ const rig_cleaner = require "@plugin/libs/rig_cleaner"
 const background = require "./core/background"
 const button = require "./core/button"
 const padding = require "./core/padding"
-const row = require "./core/row"
 local foreground = require "./core/foreground"
+const scroll_frame = require "./core/scroll_frame"
+const text = require "./core/text"
+const dropdown = require "./core/dropdown"
+const row = require "./core/row"
+const loading_circle = require "./core/loading_circle"
 
 const outfit_list = require "./outfit_list"
+local alert_list = require("./alert_list")
 
 const store = require "@plugin/store"
-local state = store.state
-const actions = store.actions
+const state = store.state
+local alerts = require "@plugin/store/alerts"
 
 const assets = require "@assets"
-local scroll_frame = require(script.Parent.core.scroll_frame)
 
 const FOLDER_NAME = "riggi_plugin_loaded"
 
-const function import(material: Enum.Material?, useFolder: boolean, noFix: boolean?, file: string?, fileName: string?)
+const function import(
+	material: (Enum.Material | string)?,
+	useFolder: boolean,
+	noFix: boolean,
+	file: string?,
+	fileName: string?
+)
+	if material == "Original" then
+		material = nil
+	end
 	local folder = Workspace:FindFirstChild(FOLDER_NAME)
 	local offset = 0
 
@@ -50,14 +65,22 @@ const function import(material: Enum.Material?, useFolder: boolean, noFix: boole
 		else StudioService:PromptImportFilesAsync({ "txt", "json" }) :: any
 
 	for i, file: File | string in files do
+		if i % 3 == 0 then
+			task.wait()
+		end
 		local decoded = if typeof(file) == "string"
 			then HttpService:JSONDecode(file)
 			else HttpService:JSONDecode(file:GetBinaryContents())
 
 		local clone = assets.r6_rig:Clone()
 		clone:PivotTo(origin * CFrame.new(-5 * (i - 1 + offset), 0, 0))
-		clone.Name = string.gsub(fileName or (file :: any).Name, "%.[^%.]+$", "")
-			.. `{if material then ` ({material.Name})` else ""}`
+		const materialName = if typeof(material) == "EnumItem"
+			then material.Name
+			elseif typeof(material) == "string" then material
+			else "Original"
+
+		clone.Name = string.gsub(fileName or (file :: any).Name, "%.[^%.]+$", "") .. `({materialName})`
+
 		clone.Parent = if useFolder then folder else Workspace
 
 		perdere_loader.load_to_rig(clone, decoded)
@@ -68,58 +91,158 @@ const function import(material: Enum.Material?, useFolder: boolean, noFix: boole
 	ChangeHistoryService:SetWaypoint("loaded rigs")
 end
 
+const materials: { string } = { "Original", "EntirelyBlankPlastic" }
+for _, material in Enum.Material:GetEnumItems() do
+	if material == Enum.Material.Air or material == Enum.Material.Water then
+		continue
+	end
+	table.insert(materials, material.Name)
+end
+
 return function(plugin: Plugin)
+	const selectedMaterialIndex = source(1)
+	const loadingAssets = source(false)
+
+	const useFolder = source(false)
+
+	const alertScrollRef = source(nil :: ScrollingFrame?)
+
+	effect(function()
+		const alertScroll = (alertScrollRef :: any)() :: ScrollingFrame?
+		if not alertScroll then
+			return
+		end
+
+		alerts.state.alerts()
+
+		alertScroll.CanvasPosition = Vector2.yAxis
+			* (alertScroll.AbsoluteCanvasSize.Y - alertScroll.AbsoluteWindowSize.Y)
+	end)
+
 	return background {
-		Size = UDim2.fromScale(1, 1),
-		padding {},
-		vide.create "UIListLayout" {
-			FillDirection = Enum.FillDirection.Vertical,
-			VerticalAlignment = Enum.VerticalAlignment.Center,
-			Padding = UDim.new(0, 8),
-		},
+		alert_list(),
+		scroll_frame {
+			background {
+				Size = UDim2.fromScale(1, 1),
+				padding {},
+				vide.create "UIListLayout" {
+					FillDirection = Enum.FillDirection.Vertical,
+					VerticalAlignment = Enum.VerticalAlignment.Center,
+					Padding = UDim.new(0, 8),
+				},
+				vide.create "UISizeConstraint" {
+					MinSize = Vector2.new(200, 400),
+				},
 
-		outfit_list(),
+				outfit_list(),
 
-		foreground {
-			Size = UDim2.new(1, 0, 0, 2),
-			LayoutOrder = 1,
-		},
+				foreground {
+					Size = UDim2.new(1, 0, 0, 2),
+					LayoutOrder = 1,
+				},
 
-		button {
-			text = function(): string
-				return if #state.selected_outfits() == 0 then "Import files" else "Import selected"
-			end,
-			primary = true,
-			layout = {
-				LayoutOrder = 2,
+				row {
+					layout = { LayoutOrder = 2 },
+					list = {
+						VerticalAlignment = Enum.VerticalAlignment.Center,
+						HorizontalFlex = Enum.UIFlexAlignment.Fill,
+					},
+					button {
+						text = function(): string
+							return if loadingAssets()
+								then "Loading characters.."
+								elseif #state.selected_outfits() == 0 then "Import files"
+								else "Import selected"
+						end,
+						primary = function()
+							return not loadingAssets()
+						end,
+						layout = {
+							LayoutOrder = 0,
+						},
+						disabled = loadingAssets,
+						activated = function()
+							loadingAssets(true)
+							const selected = state.selected_outfits()
+							if #selected == 0 then
+								import(
+									materials[vide.untrack(selectedMaterialIndex)],
+									true,
+									vide.untrack(useFolder),
+									nil,
+									nil
+								)
+							else
+								for _, name in selected do
+									const outfit = state.outfits()[name]
+									import(
+										materials[vide.untrack(selectedMaterialIndex)],
+										true,
+										vide.untrack(useFolder),
+										outfit,
+										name
+									)
+								end
+							end
+
+							loadingAssets(false)
+							print("DONE")
+						end,
+					},
+					vide.show(loadingAssets, function()
+						return loading_circle {}
+					end),
+				},
+
+				row {
+					layout = { LayoutOrder = 3 },
+					list = {
+						VerticalAlignment = Enum.VerticalAlignment.Center,
+						HorizontalFlex = Enum.UIFlexAlignment.Fill,
+					},
+
+					text {
+						Text = "Material",
+						vide.create "UIFlexItem" {
+							GrowRatio = 0,
+						},
+					},
+
+					dropdown {
+						selected = selectedMaterialIndex,
+						update_selected = selectedMaterialIndex,
+
+						options = materials,
+					},
+
+					button {
+						text = "Setup material variant",
+						layout = {
+							LayoutOrder = 2,
+							Size = UDim2.new(0, 0, 0, 24),
+							AutomaticSize = Enum.AutomaticSize.X,
+						},
+						activated = function()
+							const variant =
+								MaterialService:GetMaterialVariant(Enum.Material.Plastic, "EntirelyBlankPlastic")
+							if variant then
+								variant:Destroy()
+							end
+
+							const newVariant = Instance.new("MaterialVariant")
+							newVariant.BaseMaterial = Enum.Material.Plastic
+							newVariant.Name = "EntirelyBlankPlastic"
+							newVariant.Parent = MaterialService
+						end,
+
+						child = {
+							vide.create "UIFlexItem" {
+								GrowRatio = 0,
+							},
+						},
+					},
+				},
 			},
-			activated = function()
-				const selected = state.selected_outfits()
-				if #selected == 0 then
-					import(Enum.Material.SmoothPlastic, true)
-				else
-					for _, name in selected do
-						const outfit = state.outfits()[name]
-						import(Enum.Material.SmoothPlastic, true, nil, outfit, name)
-					end
-				end
-			end,
-		},
-
-		button {
-			text = "Setup material variant",
-			layout = { LayoutOrder = 4 },
-			activated = function()
-				const variant = MaterialService:GetMaterialVariant(Enum.Material.Plastic, "EntirelyBlankPlastic")
-				if variant then
-					variant:Destroy()
-				end
-
-				const newVariant = Instance.new("MaterialVariant")
-				newVariant.BaseMaterial = Enum.Material.Plastic
-				newVariant.Name = "EntirelyBlankPlastic"
-				newVariant.Parent = MaterialService
-			end,
 		},
 	}
 end

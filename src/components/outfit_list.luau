@@ -8,6 +8,8 @@ const effect = vide.effect
 const show = vide.show
 
 const store = require "@plugin/store"
+const alerts = require "@plugin/store/alerts"
+
 const studio_color = require "@plugin/util/studio_color"
 const studio_types = require "@plugin/util/studio_types"
 
@@ -61,7 +63,7 @@ return function()
 
 		scroll_frame {
 			Size = function()
-				return UDim2.new(1, 0, 0, math.clamp(frameHeight(), 40, 200))
+				return UDim2.new(1, 0, 0, math.clamp(frameHeight(), 40, 300))
 			end,
 			AutomaticCanvasSize = Enum.AutomaticSize.Y,
 			ScrollingDirection = Enum.ScrollingDirection.Y,
@@ -215,6 +217,7 @@ return function()
 								TextXAlignment = Enum.TextXAlignment.Center,
 								AnchorPoint = Vector2.new(0.5, 0.5),
 								Position = UDim2.fromScale(0.5, 0.5),
+								TextTruncate = Enum.TextTruncate.None,
 							},
 							activated = function()
 								const old = table.clone(store.state.selected_outfits())
@@ -260,7 +263,9 @@ return function()
 
 		row {
 			layout = { LayoutOrder = 2 },
+			list = { HorizontalFlex = Enum.UIFlexAlignment.Fill },
 			button {
+				layout = { LayoutOrder = 0 },
 				text = "Add outfit",
 				activated = function()
 					const files = StudioService:PromptImportFilesAsync({ "json", "txt" })
@@ -270,9 +275,22 @@ return function()
 							continue
 						end
 
+						const existing = store.state.outfits()[stripped]
+						if existing ~= nil then
+							alerts.actions.alert(
+								"warn",
+								`Unable to add outfit <b>{stripped}<b/> since it already exists. Delete it first!`
+							)
+							continue
+						end
 						store.actions.set_outfit(stripped, file:GetBinaryContents())
 					end
 				end,
+			},
+			button {
+				layout = { LayoutOrder = 1 },
+				text = "Add outfit (paste string)",
+				activated = function() end,
 			},
 		},
 	}

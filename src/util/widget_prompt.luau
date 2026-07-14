@@ -51,7 +51,6 @@ local function spawn_prompt_widget<T>(id: string, info: DockWidgetPluginGuiInfo,
 	local unmount: () -> ()
 
 	local widget = plugin:CreateDockWidgetPluginGuiAsync(id, info)
-	print(widget)
 	widget.Enabled = true
 
 	local function submit(value: T)

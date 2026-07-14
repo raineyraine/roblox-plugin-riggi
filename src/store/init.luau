@@ -3,7 +3,7 @@
 const vide = require "@pkgs/vide"
 const source = vide.source
 
-const keys = require "./keys"
+const keys = require "@plugin/keys"
 
 type Map<Key, Value> = { [Key]: Value }
 type Array<Value> = { Value }

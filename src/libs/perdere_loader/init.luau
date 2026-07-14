@@ -1,6 +1,6 @@
 --!strict
 
-local types = require "./types"
+local types = require "@self/types"
 
 export type JSONColor3 = types.JSONColor3
 export type JSONVector3 = types.JSONVector3
