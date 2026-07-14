@@ -2,6 +2,7 @@
 
 const ChangeHistoryService = game:GetService "ChangeHistoryService"
 const HttpService = game:GetService "HttpService"
+const MaterialService = game:GetService "MaterialService"
 const StudioService = game:GetService "StudioService"
 const Workspace = game:GetService "Workspace"
 
@@ -15,6 +16,7 @@ const background = require "./core/background"
 const button = require "./core/button"
 const padding = require "./core/padding"
 const row = require "./core/row"
+local foreground = require "./core/foreground"
 
 const outfit_list = require "./outfit_list"
 
@@ -23,7 +25,7 @@ local state = store.state
 const actions = store.actions
 
 const assets = require "@assets"
-local foreground = require "./core/foreground"
+local scroll_frame = require(script.Parent.core.scroll_frame)
 
 const FOLDER_NAME = "riggi_plugin_loaded"
 
@@ -46,6 +48,7 @@ const function import(material: Enum.Material?, useFolder: boolean, noFix: boole
 	local files: { File | string } = if file
 		then { file }
 		else StudioService:PromptImportFilesAsync({ "txt", "json" }) :: any
+
 	for i, file: File | string in files do
 		local decoded = if typeof(file) == "string"
 			then HttpService:JSONDecode(file)
@@ -67,9 +70,11 @@ end
 
 return function(plugin: Plugin)
 	return background {
+		Size = UDim2.fromScale(1, 1),
 		padding {},
 		vide.create "UIListLayout" {
 			FillDirection = Enum.FillDirection.Vertical,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
 			Padding = UDim.new(0, 8),
 		},
 
@@ -98,6 +103,22 @@ return function(plugin: Plugin)
 						import(Enum.Material.SmoothPlastic, true, nil, outfit, name)
 					end
 				end
+			end,
+		},
+
+		button {
+			text = "Setup material variant",
+			layout = { LayoutOrder = 4 },
+			activated = function()
+				const variant = MaterialService:GetMaterialVariant(Enum.Material.Plastic, "EntirelyBlankPlastic")
+				if variant then
+					variant:Destroy()
+				end
+
+				const newVariant = Instance.new("MaterialVariant")
+				newVariant.BaseMaterial = Enum.Material.Plastic
+				newVariant.Name = "EntirelyBlankPlastic"
+				newVariant.Parent = MaterialService
 			end,
 		},
 	}
