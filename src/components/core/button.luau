@@ -107,6 +107,7 @@ local function button(props: ButtonProps)
 				end) :: any),
 				Font = Enum.Font.SourceSans,
 				TextSize = 16,
+				TextTruncate = Enum.TextTruncate.AtEnd,
 
 				props.layout_text,
 			},
