@@ -2,5 +2,25 @@
 	"stylua.targetReleaseVersion": "latest",
 	"luau-lsp.fflags.enableNewSolver": true,
 
-	"luau-lsp.completion.imports.stringRequires.enabled": true
+	"luau-lsp.completion.imports.stringRequires.enabled": true,
+
+	"[markdown]": {
+		"editor.unicodeHighlight.ambiguousCharacters": false,
+		"editor.unicodeHighlight.invisibleCharacters": false,
+		"diffEditor.ignoreTrimWhitespace": false,
+		"editor.wordWrap": "on",
+		"editor.quickSuggestions": {
+			"comments": "off",
+			"strings": "off",
+			"other": "off"
+		},
+		"editor.defaultFormatter": "Jota0222.multi-formatter",
+		"multiFormatter.formatterList": [
+			"yzhang.markdown-all-in-one",
+			"esbenp.prettier-vscode"
+		],
+		"prettier.proseWrap": "always",
+		"prettier.printWidth": 80,
+		"editor.formatOnSave": true
+	}
 }
