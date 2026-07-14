@@ -76,12 +76,14 @@ end
 build_plugin.build = build
 
 function install()
+	print(rt.dim "copying to plugin path...")
 	local builtPath = build()
 	assert(builtPath, "no built plugin?")
 	local pluginPath = studio_install.get_plugin_path()
 	assert(pluginPath, "no plugin path?")
 
 	fs.copy(builtPath, path.join(pluginPath, "/riggi_plugin_dev.rbxm"), true)
+	print(rt.green "built plugin copied into studio!")
 end
 build_plugin.install = install
 
