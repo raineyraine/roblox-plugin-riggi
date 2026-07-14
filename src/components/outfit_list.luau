@@ -291,6 +291,7 @@ return function()
 				layout = { LayoutOrder = 1 },
 				text = "Add outfit (paste string)",
 				activated = function() end,
+				disabled = true,
 			},
 		},
 	}
