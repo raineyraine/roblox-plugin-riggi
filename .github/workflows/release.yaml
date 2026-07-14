@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  analyze:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
