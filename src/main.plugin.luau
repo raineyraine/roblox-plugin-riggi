@@ -14,7 +14,6 @@ vide.defaults = true
 
 do
 	local saved_outfits = plugin:GetSetting(keys.saved_state.presets)
-	print(saved_outfits)
 
 	if saved_outfits and typeof(saved_outfits) == "table" then
 		state.outfits(saved_outfits)
