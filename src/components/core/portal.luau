@@ -36,12 +36,12 @@ local function portal(props: PortalProps)
 		if not object then
 			return
 		end
-
 		local function update()
 			size(UDim2.fromOffset(object.AbsoluteSize.X, object.AbsoluteSize.Y))
 			position(UDim2.fromOffset(object.AbsolutePosition.X, object.AbsolutePosition.Y))
 		end
 
+		update()
 		cleanup(object:GetPropertyChangedSignal("AbsoluteSize"):Connect(update))
 		cleanup(object:GetPropertyChangedSignal("AbsolutePosition"):Connect(update))
 	end)
