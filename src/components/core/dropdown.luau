@@ -12,7 +12,7 @@ local read = vide.read
 
 local button = require "./button"
 local color = require "@plugin/util/studio_color"
-local container = require "./button"
+local container = require "./container"
 local list = require "./list"
 local padding = require "./padding"
 local portal = require "./portal"
@@ -63,7 +63,6 @@ local function dropdown(props: DropdownProps)
 				AnchorPoint = Vector2.new(1, 0),
 				Position = UDim2.fromScale(1, 0),
 				Size = UDim2.new(0, 18, 0, 16),
-
 				create "ImageLabel" {
 
 					Name = "arrow",
