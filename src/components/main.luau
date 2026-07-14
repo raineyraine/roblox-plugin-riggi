@@ -130,7 +130,7 @@ return function(plugin: Plugin)
 					Padding = UDim.new(0, 8),
 				},
 				vide.create "UISizeConstraint" {
-					MinSize = Vector2.new(200, 400),
+					MinSize = Vector2.new(200, 300),
 				},
 
 				outfit_list(),
