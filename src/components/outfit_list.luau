@@ -5,7 +5,6 @@ const source = vide.source
 const changed = vide.changed
 const spring = vide.spring
 const effect = vide.effect
-const show = vide.show
 
 const store = require "@plugin/store"
 const alerts = require "@plugin/store/alerts"
