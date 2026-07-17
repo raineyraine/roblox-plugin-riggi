@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 format = 2
 name = "raineyraine/riggi_plugin"
-version = "0.2.1"
+version = "0.2.3"
 target = "roblox"
 
 [graph."0x5eal/unzip@0.2.1 luau".pkg_ref]
@@ -24,6 +24,13 @@ ref_ty = "git"
 repo = "https://github.com/centau/vide"
 tree_id = "8890f5044158a71592249e2d91646715b98ca4aa"
 new_structure = true
+
+[graph."corecii/greentea@0.4.11 roblox"]
+direct = ["greentea", { name = "corecii/greentea", version = "^0.4.11", index = "default" }, "standard"]
+
+[graph."corecii/greentea@0.4.11 roblox".pkg_ref]
+ref_ty = "pesde"
+index_url = "https://github.com/pesde-pkg/index"
 
 [graph."jiwonz/dirs@0.6.0 lune".dependencies]
 greentea = ["jiwonz/greentea_luau@0.2.0 luau", "standard"]
