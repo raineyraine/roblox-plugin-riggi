@@ -65,6 +65,16 @@ return function()
 					Text = value.message,
 					RichText = true,
 					TextTransparency = transparencySpring,
+					TextColor3 = studio_color(function(): studio_types.StudioColors
+						if value.kind == "warn" then
+							return "WarningText"
+						elseif value.kind == "Eror" then
+							return "ErrorText"
+						elseif value.kind == "Success" then
+							return "InfoText"
+						end
+						return "MainText"
+					end),
 				},
 			},
 				1 / 4

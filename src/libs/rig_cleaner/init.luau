@@ -1,7 +1,7 @@
 --!nocheck
 -- TODO: make strict
 
-local AssetService = game:GetService("AssetService")
+local AssetService = game:GetService "AssetService"
 
 local lib = {}
 
@@ -9,13 +9,12 @@ local function clean_rig(rig: Model, material: (Enum.Material | string)?)
 	local loading = 0
 
 	for _, v in rig:GetChildren() do
-		if v:IsA("Accessory") then
+		if v:IsA "Accessory" then
 			loading += 1
-			print(loading)
 			task.spawn(function()
-				local handle = v:FindFirstChild("Handle") :: BasePart
-				local mesh = handle:FindFirstChildOfClass("SpecialMesh")
-				local weld = handle:FindFirstChildOfClass("Weld")
+				local handle = v:FindFirstChild "Handle" :: BasePart
+				local mesh = handle:FindFirstChildOfClass "SpecialMesh"
+				local weld = handle:FindFirstChildOfClass "Weld"
 				local Size = mesh.Scale
 
 				local success, mp: MeshPart = pcall(function()
@@ -49,7 +48,7 @@ local function clean_rig(rig: Model, material: (Enum.Material | string)?)
 				mp.Anchored = true
 				mp.Parent = weld.Part1
 				mp.Size = mp.Size * Size
-				local attachment = handle:FindFirstChildOfClass("Attachment")
+				local attachment = handle:FindFirstChildOfClass "Attachment"
 				if not attachment then
 					v:Destroy()
 					return
@@ -73,16 +72,16 @@ local function clean_rig(rig: Model, material: (Enum.Material | string)?)
 	until loading == 0
 
 	for _, v in rig:GetChildren() do
-		if v:IsA("BasePart") then
+		if v:IsA "BasePart" then
 			for _, basepart_child in v:GetChildren() do
-				if basepart_child:IsA("Attachment") or basepart_child:IsA("Motor6D") then
+				if basepart_child:IsA "Attachment" or basepart_child:IsA "Motor6D" then
 					basepart_child:Destroy()
 				end
 			end
 		end
 	end
 
-	local head = rig:FindFirstChild("Head") :: BasePart
+	local head = rig:FindFirstChild "Head" :: BasePart
 	head.PivotOffset = CFrame.new(Vector3.new(0, -(head.Size.Y / 2), 0))
 
 	head.Name = "Noggin"

@@ -1,3 +1,4 @@
+local HttpService = game:GetService "HttpService"
 local StudioService = game:GetService "StudioService"
 
 const vide = require "@pkgs/vide"
@@ -6,8 +7,9 @@ const changed = vide.changed
 const spring = vide.spring
 const effect = vide.effect
 
-const store = require "@plugin/store"
+const core = require "@plugin/store/core"
 const alerts = require "@plugin/store/alerts"
+const outfits = require "@plugin/store/outfits"
 
 const studio_color = require "@plugin/util/studio_color"
 const studio_types = require "@plugin/util/studio_types"
@@ -17,6 +19,7 @@ const row = require "./core/row"
 const text = require "./core/text"
 const padding = require "./core/padding"
 const button = require "./core/button"
+local foreground = require "./core/foreground"
 const radio_button = require "./core/radio_button"
 const scroll_frame = require "./core/scroll_frame"
 const text_input = require "./core/text_input"
@@ -26,7 +29,7 @@ return function()
 	const absoluteCanvasSize = source(Vector2.new(0, 0))
 	const absoluteSize = source(Vector2.new(0, 0))
 
-	const searchText = source("")
+	const searchText = source ""
 	return list {
 		layout = {
 			Size = UDim2.new(1, 0, 0, 0),
@@ -81,7 +84,7 @@ return function()
 			changed("AbsoluteCanvasSize", absoluteCanvasSize :: any),
 			changed("AbsoluteSize", absoluteSize :: any),
 
-			vide.indexes(store.state.outfits, function(value, key)
+			vide.indexes(outfits.state.outfits, function(value: () -> string, key)
 				const selected = source(false)
 				const matchesSearch = source(true)
 				const foundIndex = source(-1)
@@ -135,7 +138,7 @@ return function()
 
 					MouseButton1Click = function()
 						selected(not selected())
-						const old = table.clone(store.state.selected_outfits())
+						const old = table.clone(core.state.selected_outfits())
 
 						if not selected() then
 							table.remove(old, table.find(old, key))
@@ -143,7 +146,7 @@ return function()
 							table.insert(old, key)
 						end
 
-						store.state.selected_outfits(old)
+						core.state.selected_outfits(old)
 					end,
 
 					changed("GuiState", guiState :: any),
@@ -156,6 +159,7 @@ return function()
 						list = {
 							FillDirection = Enum.FillDirection.Horizontal,
 							HorizontalFlex = Enum.UIFlexAlignment.Fill,
+							VerticalAlignment = Enum.VerticalAlignment.Center,
 						},
 						layout = {
 							AutomaticSize = Enum.AutomaticSize.Y,
@@ -164,7 +168,7 @@ return function()
 							toggled = selected,
 							update_toggled = function(new)
 								selected(new)
-								const old = table.clone(store.state.selected_outfits())
+								const old = table.clone(core.state.selected_outfits())
 
 								if not new then
 									table.remove(old, table.find(old, key))
@@ -172,7 +176,7 @@ return function()
 									table.insert(old, key)
 								end
 
-								store.state.selected_outfits(old)
+								core.state.selected_outfits(old)
 							end,
 
 							vide.create "UIFlexItem" {
@@ -193,16 +197,39 @@ return function()
 
 								return key
 							end,
-							LayoutOrder = 0,
+							LayoutOrder = 1,
 							Size = UDim2.new(1, 0, 0, 24),
 							RichText = true,
 							TextTruncate = Enum.TextTruncate.AtEnd,
 						},
 
+						text {
+							Text = "perdere",
+							TextSize = 14,
+							LayoutOrder = 2,
+							BackgroundTransparency = 0,
+							BackgroundColor3 = studio_color "InputFieldBackground",
+
+							padding {
+								y = UDim.new(0, 4),
+								x = UDim.new(0, 8),
+							},
+							vide.create "UIFlexItem" {
+								GrowRatio = 0,
+							},
+							vide.create "UIStroke" {
+								ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+								Color = studio_color "InputFieldBorder",
+							},
+							vide.create "UICorner" {
+								CornerRadius = UDim.new(1, 0),
+							},
+						},
+
 						button {
 							text = "Delete",
 							layout = {
-								LayoutOrder = 1,
+								LayoutOrder = 3,
 								Size = UDim2.new(0, 64, 0, 24),
 								AnchorPoint = Vector2.new(1, 0),
 								Position = UDim2.fromScale(1, 0),
@@ -219,14 +246,14 @@ return function()
 								TextTruncate = Enum.TextTruncate.None,
 							},
 							activated = function()
-								const old = table.clone(store.state.selected_outfits())
+								const old = table.clone(core.state.selected_outfits())
 								if selected() then
 									table.remove(old, table.find(old, key))
 								end
-								store.state.selected_outfits(old)
+								core.state.selected_outfits(old)
 
 								frameHeight(frameHeight() - 40 - 8)
-								store.actions.remove_outfit(key)
+								outfits.actions.remove_outfit(key)
 							end,
 						},
 					},
@@ -247,7 +274,7 @@ return function()
 				},
 
 				Visible = function()
-					return not next(store.state.outfits())
+					return not next(outfits.state.outfits())
 				end,
 
 				text {
@@ -267,22 +294,22 @@ return function()
 				layout = { LayoutOrder = 0 },
 				text = "Add outfit",
 				activated = function()
-					const files = StudioService:PromptImportFilesAsync({ "json", "txt" })
+					const files = StudioService:PromptImportFilesAsync { "json", "txt" }
 					for _, file: File in files do
 						const stripped = string.match(file.Name, "(.-)%..*")
 						if not stripped then
 							continue
 						end
 
-						const existing = store.state.outfits()[stripped]
+						const existing = outfits.state.outfits()[stripped]
 						if existing ~= nil then
 							alerts.actions.alert(
 								"warn",
-								`Unable to add outfit <b>{stripped}<b/> since it already exists. Delete it first!`
+								`Unable to add outfit <b>{stripped}</b> since it already exists. Delete it first!`
 							)
 							continue
 						end
-						store.actions.set_outfit(stripped, file:GetBinaryContents())
+						outfits.actions.set_outfit(stripped, file:GetBinaryContents())
 					end
 				end,
 			},

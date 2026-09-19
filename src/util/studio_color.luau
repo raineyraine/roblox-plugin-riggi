@@ -7,7 +7,7 @@ local read = vide.read
 local studio_types = require "./studio_types"
 local types = require "../types"
 
-local studio = settings():GetService("Studio")
+local studio = settings():GetService "Studio"
 
 type Can<T> = types.Can<T>
 

@@ -10,7 +10,7 @@ const vide = require "@pkgs/vide"
 const source = vide.source
 const effect = vide.effect
 
-const perdere_loader = require "@plugin/libs/perdere_loader"
+const perdere_loader = require "@plugin/preset/perdere/loader"
 const rig_cleaner = require "@plugin/libs/rig_cleaner"
 
 const background = require "./core/background"
@@ -24,11 +24,11 @@ const row = require "./core/row"
 const loading_circle = require "./core/loading_circle"
 
 const outfit_list = require "./outfit_list"
-local alert_list = require("./alert_list")
+local alert_list = require "./alert_list"
 
-const store = require "@plugin/store"
-const state = store.state
+const core = require "@plugin/store/core"
 local alerts = require "@plugin/store/alerts"
+const outfits = require "@plugin/store/outfits"
 
 const assets = require "@assets"
 
@@ -49,7 +49,7 @@ const function import(
 
 	if useFolder then
 		if not folder then
-			folder = Instance.new("Folder")
+			folder = Instance.new "Folder"
 			folder.Name = FOLDER_NAME
 			folder.Parent = Workspace
 		end
@@ -61,15 +61,29 @@ const function import(
 
 	local files: { File | string } = if file
 		then { file }
-		else StudioService:PromptImportFilesAsync({ "txt", "json" }) :: any
+		else StudioService:PromptImportFilesAsync { "txt", "json" } :: any
 
 	for i, file: File | string in files do
 		if i % 3 == 0 then
 			task.wait()
 		end
-		local decoded = if typeof(file) == "string"
-			then HttpService:JSONDecode(file)
-			else HttpService:JSONDecode(file:GetBinaryContents())
+		local decoded = ""
+		const binary_contents = if typeof(file) == "string" then file else file:GetBinaryContents()
+
+		do
+			const success, result = pcall(HttpService.JSONDecode, HttpService, binary_contents)
+			if not success then
+				alerts.actions.alert(
+					"error",
+					`Failed to load outfit <b>{fileName or (file :: any).Name}</b><br/>A full log is available in the Output window`
+				)
+
+				warn(`Failure loading outfit {fileName or (file :: any).Name}:\n{result}`)
+				continue
+			end
+
+			decoded = result
+		end
 
 		local clone = assets.r6_rig:Clone()
 		clone:PivotTo(origin * CFrame.new(-5 * (i - 1 + offset), 0, 0))
@@ -82,12 +96,23 @@ const function import(
 
 		clone.Parent = if useFolder then folder else Workspace
 
-		perdere_loader.load_to_rig(clone, decoded)
-		if not noFix then
-			rig_cleaner.clean_rig(clone, material)
+		const success, message = pcall(function()
+			perdere_loader.load_to_rig(clone, decoded)
+			if not noFix then
+				rig_cleaner.clean_rig(clone, material)
+			end
+		end)
+
+		if not success then
+			alerts.actions.alert(
+				"error",
+				`Failed to load outfit <b>{fileName or (file :: any).Name}</b><br/>A full log is available in the Output window`
+			)
+
+			warn(`Failure loading outfit {fileName or (file :: any).Name}:\n{message}`)
 		end
 	end
-	ChangeHistoryService:SetWaypoint("loaded rigs")
+	ChangeHistoryService:SetWaypoint "loaded rigs"
 end
 
 const materials: { string } = { "Original", "EntirelyBlankPlastic" }
@@ -150,7 +175,7 @@ return function(plugin: Plugin)
 						text = function(): string
 							return if loadingAssets()
 								then "Loading characters.."
-								elseif #state.selected_outfits() == 0 then "Import files"
+								elseif #core.state.selected_outfits() == 0 then "Import files"
 								else "Import selected"
 						end,
 						primary = function()
@@ -162,7 +187,7 @@ return function(plugin: Plugin)
 						disabled = loadingAssets,
 						activated = function()
 							loadingAssets(true)
-							const selected = state.selected_outfits()
+							const selected = core.state.selected_outfits()
 							if #selected == 0 then
 								import(
 									materials[vide.untrack(selectedMaterialIndex)],
@@ -173,7 +198,7 @@ return function(plugin: Plugin)
 								)
 							else
 								for _, name in selected do
-									const outfit = state.outfits()[name]
+									const outfit = outfits.state.outfits()[name]
 									import(
 										materials[vide.untrack(selectedMaterialIndex)],
 										true,
@@ -185,7 +210,6 @@ return function(plugin: Plugin)
 							end
 
 							loadingAssets(false)
-							print("DONE")
 						end,
 					},
 					vide.show(loadingAssets, function()
@@ -228,7 +252,7 @@ return function(plugin: Plugin)
 								variant:Destroy()
 							end
 
-							const newVariant = Instance.new("MaterialVariant")
+							const newVariant = Instance.new "MaterialVariant"
 							newVariant.BaseMaterial = Enum.Material.Plastic
 							newVariant.Name = "EntirelyBlankPlastic"
 							newVariant.Parent = MaterialService

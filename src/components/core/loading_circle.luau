@@ -1,4 +1,4 @@
-local RunService = game:GetService("RunService")
+local RunService = game:GetService "RunService"
 
 local color = require "@plugin/util/studio_color"
 local vide = require "@pkgs/vide"
@@ -16,13 +16,13 @@ type progress_circle = {
 
 local DARK = Color3.fromRGB(11, 90, 175)
 local HIGHLIGHT = Color3.fromRGB(0, 162, 255)
-local color_sequence = ColorSequence.new({
+local color_sequence = ColorSequence.new {
 	ColorSequenceKeypoint.new(0, DARK),
 	ColorSequenceKeypoint.new(0.001, HIGHLIGHT),
 	ColorSequenceKeypoint.new(0.4, HIGHLIGHT),
 	ColorSequenceKeypoint.new(0.6, DARK),
 	ColorSequenceKeypoint.new(1, DARK),
-})
+}
 
 local function loading_circle(props: progress_circle)
 	local rotation = source(0)
@@ -71,7 +71,7 @@ local function loading_circle(props: progress_circle)
 			Position = UDim2.fromScale(0.5, 0.5),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 
-			BackgroundColor3 = color("MainBackground"),
+			BackgroundColor3 = color "MainBackground",
 
 			create "UICorner" {
 				CornerRadius = UDim.new(1, 0),

@@ -61,4 +61,4 @@ export type PresetData = {
 	["Bio"]: string,
 }
 
-return nil
+return {}

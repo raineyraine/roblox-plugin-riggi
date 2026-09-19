@@ -17,7 +17,7 @@ local function text(props: text)
 
 		BackgroundTransparency = 1,
 
-		TextColor3 = color("MainText"),
+		TextColor3 = color "MainText",
 		Font = Enum.Font.SourceSans,
 		TextSize = 16,
 		TextWrapped = true,

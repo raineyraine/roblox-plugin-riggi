@@ -75,7 +75,7 @@ const function radio_button(props: radio_button)
 
 				BackgroundTransparency = 1,
 
-				ImageColor3 = color("MainButton"),
+				ImageColor3 = color "MainButton",
 				ImageTransparency = spring(function()
 					return if read(toggled) then 0 else 1
 				end, 0.1),

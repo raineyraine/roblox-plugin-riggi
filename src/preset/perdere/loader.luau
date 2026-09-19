@@ -1,6 +1,5 @@
---!strict
-
-local types = require "@self/types"
+const types = require "./types"
+const schema = require "./schema"
 
 export type JSONColor3 = types.JSONColor3
 export type JSONVector3 = types.JSONVector3
@@ -32,23 +31,25 @@ end
 local lib = {}
 
 function lib.load_to_rig(character: Model, data: PresetData)
+	schema.presetDataSchema:assert(data)
+
 	-- type: will always be a Shirt, but luau cannot detect this
-	local shirt = character:FindFirstChildWhichIsA("Shirt") :: Shirt
+	local shirt = character:FindFirstChildWhichIsA "Shirt" :: Shirt
 	if not shirt then
-		shirt = Instance.new("Shirt")
+		shirt = Instance.new "Shirt"
 		shirt.Parent = character
 	end
 	-- type: will always be a Pants, but luau cannot detect this
-	local pants = character:FindFirstChildWhichIsA("Pants") :: Pants
+	local pants = character:FindFirstChildWhichIsA "Pants" :: Pants
 	if not pants then
-		pants = Instance.new("Pants")
+		pants = Instance.new "Pants"
 		pants.Parent = character
 	end
 
-	local head = character:FindFirstChild("Head")
-	assert(head and head:IsA("BasePart"), `no head found for {character}`)
-	local face = head:FindFirstChild("face") :: Decal
-	assert(face and face:IsA("Decal"), `no face found for {character}`)
+	local head = character:FindFirstChild "Head"
+	assert(head and head:IsA "BasePart", `no head found for {character}`)
+	local face = head:FindFirstChild "face" :: Decal
+	assert(face and face:IsA "Decal", `no face found for {character}`)
 
 	if string.len(data.Shirt) >= 0 then
 		shirt.ShirtTemplate = data.Shirt
@@ -61,16 +62,16 @@ function lib.load_to_rig(character: Model, data: PresetData)
 	end
 
 	for _, child in pairs(character:GetChildren()) do
-		if child:IsA("Accessory") then
+		if child:IsA "Accessory" then
 			child:Destroy()
 		end
 	end
 
 	for _, accessory: AccessoryData in pairs(data.Accessories) do
-		local new_accessory = Instance.new("Accessory")
+		local new_accessory = Instance.new "Accessory"
 		new_accessory.Name = accessory.Name
 
-		local handle = Instance.new("Part")
+		local handle = Instance.new "Part"
 		handle.Name = "Handle"
 		handle.Size = json_vec3_to_vec3(accessory.HandleSize)
 		handle.Transparency = accessory.HandleTransparency
@@ -83,7 +84,7 @@ function lib.load_to_rig(character: Model, data: PresetData)
 		handle.CanCollide = false
 		handle.Parent = new_accessory
 
-		local mesh = Instance.new("SpecialMesh")
+		local mesh = Instance.new "SpecialMesh"
 		mesh.MeshType = Enum.MeshType.FileMesh
 		mesh.Name = "SpecialMesh"
 		mesh.Parent = handle
@@ -93,7 +94,7 @@ function lib.load_to_rig(character: Model, data: PresetData)
 		mesh.Scale = json_vec3_to_vec3(accessory.Scale)
 		mesh.VertexColor = json_vec3_to_vec3(accessory.VertexColor)
 
-		local attachment = Instance.new("Attachment")
+		local attachment = Instance.new "Attachment"
 		attachment.Name = accessory.AttachmentName
 		attachment.Position = json_vec3_to_vec3(accessory.AttachmentPosition)
 		attachment.Orientation = json_vec3_to_vec3(accessory.AttachmentOrientation)
@@ -118,10 +119,10 @@ function lib.load_to_rig(character: Model, data: PresetData)
 				newLight.Range = lightData.Range
 			end
 
-			if lightData.Angle and (newLight:IsA("SpotLight") or newLight:IsA("SurfaceLight")) then
+			if lightData.Angle and (newLight:IsA "SpotLight" or newLight:IsA "SurfaceLight") then
 				newLight.Angle = lightData.Angle
 			end
-			if lightData.Face and (newLight:IsA("SpotLight") or newLight:IsA("SurfaceLight")) then
+			if lightData.Face and (newLight:IsA "SpotLight" or newLight:IsA "SurfaceLight") then
 				pcall(function()
 					-- upstream_change type errors
 					-- newLight.Face = Enum.NormalId[lightData.Face]
@@ -152,7 +153,7 @@ function lib.load_to_rig(character: Model, data: PresetData)
 		end)
 	end
 
-	local body_colors = character:FindFirstChildWhichIsA("BodyColors")
+	local body_colors = character:FindFirstChildWhichIsA "BodyColors"
 	if data["BodyColors"] and body_colors then
 		load_body_colors(data["BodyColors"], body_colors)
 	end

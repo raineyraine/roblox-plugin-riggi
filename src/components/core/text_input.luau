@@ -34,7 +34,7 @@ local function text_input(props: TextInputProps)
 	local multi_line = props.multi_line
 	local disabled = props.disabled
 
-	local raw_text = source("")
+	local raw_text = source ""
 	local gui_state = source(Enum.GuiState.Idle)
 	local focused = source(false)
 

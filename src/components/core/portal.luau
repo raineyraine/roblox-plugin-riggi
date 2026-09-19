@@ -77,15 +77,15 @@ local function portal(props: PortalProps)
 				nearest_gui_base(nil)
 				return
 			end
-			nearest_gui_base(reference:FindFirstAncestorWhichIsA("GuiBase2d"))
-			nearest_layer_collector(reference:FindFirstAncestorWhichIsA("LayerCollector"))
+			nearest_gui_base(reference:FindFirstAncestorWhichIsA "GuiBase2d")
+			nearest_layer_collector(reference:FindFirstAncestorWhichIsA "LayerCollector")
 		end,
 
 		ref(function(instance: Instance)
 			layout += 1
 			reference(instance :: Configuration)
-			nearest_gui_base(instance:FindFirstAncestorWhichIsA("GuiBase2d"))
-			nearest_layer_collector(instance:FindFirstAncestorWhichIsA("LayerCollector"))
+			nearest_gui_base(instance:FindFirstAncestorWhichIsA "GuiBase2d")
+			nearest_layer_collector(instance:FindFirstAncestorWhichIsA "LayerCollector")
 		end),
 	}
 end

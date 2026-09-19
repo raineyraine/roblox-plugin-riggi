@@ -8,11 +8,10 @@ const mount = vide.mount
 const keys = require "./keys"
 const main_app = require "./components/main"
 
-const store = require "@plugin/store"
-const state = store.state
+const core = require "@plugin/store/core"
 
 const function app(plugin: Plugin)
-	local plugin_toolbar = plugin:CreateToolbar("Riggi Plugin")
+	local plugin_toolbar = plugin:CreateToolbar "Riggi Plugin"
 	local main_button = plugin_toolbar:CreateButton(keys.plugin.main_button, "Open/close the Riggi plugin", "", "Riggi")
 	local main_widget = plugin:CreateDockWidgetPluginGuiAsync(
 		keys.plugin.main_widget,
@@ -22,20 +21,20 @@ const function app(plugin: Plugin)
 	main_widget.Title = "Riggi"
 	main_widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-	state.open(main_widget.Enabled)
+	core.state.open(main_widget.Enabled)
 
 	main_button.Click:Connect(function()
-		state.open(not state.open())
+		core.state.open(not core.state.open())
 	end)
 
 	local unmount: (() -> ())?
 
 	main_widget:BindToClose(function()
-		state.open(false)
+		core.state.open(false)
 	end)
 
 	effect(function()
-		local open = state.open()
+		local open = core.state.open()
 		main_widget.Enabled = open
 		main_button:SetActive(open)
 

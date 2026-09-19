@@ -19,7 +19,7 @@ local function scroll_frame(props: ScrollFrameProps)
 		BackgroundTransparency = 1,
 
 		ScrollBarThickness = 6,
-		ScrollBarImageColor3 = color("SubText"),
+		ScrollBarImageColor3 = color "SubText",
 
 		props,
 	}

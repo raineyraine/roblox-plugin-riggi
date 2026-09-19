@@ -77,7 +77,7 @@ local function dropdown(props: DropdownProps)
 					BackgroundTransparency = 1,
 
 					Image = "rbxassetid://7260137654",
-					ImageColor3 = color("SubText"),
+					ImageColor3 = color "SubText",
 					ScaleType = Enum.ScaleType.Stretch,
 				},
 			},
@@ -94,7 +94,7 @@ local function dropdown(props: DropdownProps)
 					Size = size,
 
 					BackgroundTransparency = 0,
-					BackgroundColor3 = color("EmulatorDropDown"),
+					BackgroundColor3 = color "EmulatorDropDown",
 
 					ClipsDescendants = true,
 
@@ -137,7 +137,7 @@ local function dropdown(props: DropdownProps)
 					},
 
 					create "UIStroke" {
-						Color = color("Border"),
+						Color = color "Border",
 					},
 
 					create "UICorner" {
