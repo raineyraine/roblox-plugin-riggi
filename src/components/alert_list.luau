@@ -68,9 +68,9 @@ return function()
 					TextColor3 = studio_color(function(): studio_types.StudioColors
 						if value.kind == "warn" then
 							return "WarningText"
-						elseif value.kind == "Eror" then
+						elseif value.kind == "error" then
 							return "ErrorText"
-						elseif value.kind == "Success" then
+						elseif value.kind == "info" then
 							return "InfoText"
 						end
 						return "MainText"

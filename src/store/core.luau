@@ -1,5 +1,3 @@
---!strict
-
 const vide = require "@pkgs/vide"
 const source = vide.source
 

@@ -1,4 +1,3 @@
---!strict
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/text_input.luau
 
 local vide = require "@pkgs/vide"

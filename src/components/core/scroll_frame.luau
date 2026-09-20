@@ -1,4 +1,3 @@
---!strict
 -- modified https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/scroll_frame.luau
 
 local vide = require "@pkgs/vide"

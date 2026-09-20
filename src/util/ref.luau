@@ -1,5 +1,3 @@
---!strict
-
 local vide = require "@pkgs/vide"
 
 local function ref(value: (Instance) -> ())

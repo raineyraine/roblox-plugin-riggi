@@ -1,5 +1,3 @@
---!strict
-
 const vide = require "@pkgs/vide"
 const cleanup = vide.cleanup
 const effect = vide.effect

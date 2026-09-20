@@ -1,5 +1,3 @@
---!strict
-
 const function key(extension: string): string
 	return "raineyraine/riggi_plugin." .. extension
 end

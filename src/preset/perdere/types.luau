@@ -1,5 +1,3 @@
---!strict
-
 export type JSONColor3 = {
 	R: number,
 	G: number,

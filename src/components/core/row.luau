@@ -1,4 +1,3 @@
---!strict
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/row.luau
 
 const vide = require "@pkgs/vide"

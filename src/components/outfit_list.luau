@@ -1,4 +1,3 @@
-local HttpService = game:GetService "HttpService"
 local StudioService = game:GetService "StudioService"
 
 const vide = require "@pkgs/vide"
@@ -19,7 +18,6 @@ const row = require "./core/row"
 const text = require "./core/text"
 const padding = require "./core/padding"
 const button = require "./core/button"
-local foreground = require "./core/foreground"
 const radio_button = require "./core/radio_button"
 const scroll_frame = require "./core/scroll_frame"
 const text_input = require "./core/text_input"

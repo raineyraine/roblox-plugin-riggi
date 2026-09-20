@@ -1,5 +1,3 @@
---!strict
-
 local vide = require "@pkgs/vide"
 local source = vide.source
 local read = vide.read
