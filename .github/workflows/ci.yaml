@@ -26,6 +26,10 @@ jobs:
         run: |
           lute setup
 
+      - name: CI checks
+        run: |
+          lute ci
+
       - name: Build
         run: |
           lute run build

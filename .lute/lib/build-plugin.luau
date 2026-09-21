@@ -25,7 +25,7 @@ function build(): path.Pathlike?
 
 	local result: process.ProcessResult
 
-	if not fs.exists("roblox_packages") then
+	if not fs.exists "roblox_packages" then
 		print(rt.dim "installing dependencies")
 		result = exec_and_await({ "pesde", "install" }, {
 			stdio = "inherit",

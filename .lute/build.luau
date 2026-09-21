@@ -23,12 +23,12 @@ args:add("watch", "flag", {
 
 args:parse(process.args)
 
-if args:has("help") then
+if args:has "help" then
 	args:help()
 	process.exit(0)
 end
 
-if args:has("watch") then
+if args:has "watch" then
 	process.run({ "watchexec", "-w", "src", "--", "lute", "build", "-i" }, { stdio = "inherit" })
 	process.exit(0)
 end
@@ -41,7 +41,7 @@ const function step(watched: boolean?)
 	end
 
 	running_step = task.spawn(function()
-		if args:has("install") then
+		if args:has "install" then
 			build_plugin.install()
 		else
 			build_plugin.build()
