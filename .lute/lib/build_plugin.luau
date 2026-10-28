@@ -1,12 +1,12 @@
 --!strict
 
 const fs = require "@std/fs"
-const process = require "@std/process"
 const path = require "@std/path"
+const process = require "@std/process"
 
 const rt = require "@batteries/richterm"
 
-const studio_install = require "./studio-install"
+const studio_install = require "./studio_install"
 
 const DIST = "dist"
 

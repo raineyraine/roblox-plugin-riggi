@@ -5,7 +5,7 @@ const task = require "@std/task"
 
 const cli = require "@batteries/cli"
 
-const build_plugin = require "./lib/build-plugin"
+const build_plugin = require "./lib/build_plugin"
 
 const args = cli.parser()
 args:add("install", "flag", {

@@ -28,7 +28,7 @@ jobs:
 
       - name: CI checks
         run: |
-          lute ci
+          lute quality -ci
 
       - name: Build
         run: |

@@ -1,6 +1,6 @@
-const system = require "@std/system"
-const process = require "@std/process"
 const path = require "@std/path"
+const process = require "@std/process"
+const system = require "@std/system"
 
 const studio_install = {}
 

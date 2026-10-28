@@ -1,7 +1,7 @@
 -- TODO: do this
-const path = require "@std/path"
-const json = require "@std/json"
 const fs = require "@std/fs"
+const json = require "@std/json"
+const path = require "@std/path"
 
 const patterns = {
 	`require%s*"(.-)"`,

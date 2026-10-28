@@ -9,3 +9,5 @@ dist/
 sourcemap.json
 plugin.rbxm*
 build.rbxl*
+
+.lute/globalTypes.d.luau
