@@ -6,21 +6,33 @@ const changed = vide.changed
 const spring = vide.spring
 const effect = vide.effect
 
-const core = require "@plugin/store/core"
 const alerts = require "@plugin/store/alerts"
+const core = require "@plugin/store/core"
 const outfits = require "@plugin/store/outfits"
 
 const studio_color = require "@plugin/util/studio_color"
 const studio_types = require "@plugin/util/studio_types"
+local widget_prompt = require "../util/widget_prompt"
 
-const list = require "./core/list"
-const row = require "./core/row"
-const text = require "./core/text"
-const padding = require "./core/padding"
 const button = require "./core/button"
+const list = require "./core/list"
+const padding = require "./core/padding"
+local prompt_string_outfit = require "./prompt_string_outfit"
 const radio_button = require "./core/radio_button"
+const row = require "./core/row"
 const scroll_frame = require "./core/scroll_frame"
+const text = require "./core/text"
 const text_input = require "./core/text_input"
+
+const function prompt_import_string_outfit(): widget_prompt.PromptResult<prompt_string_outfit.OutfitImportResult>
+	const info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, true, 500, 500, 500, 500)
+
+	return widget_prompt
+		.spawn_prompt_widget("prompt_import_str_outfit", info, prompt_string_outfit, "Import outfit from string")
+		.on_cancel(function()
+			alerts.actions.alert("warn", "String import cancelled")
+		end)
+end
 
 return function()
 	const frameHeight = source(-8)
@@ -243,7 +255,7 @@ return function()
 								Position = UDim2.fromScale(0.5, 0.5),
 								TextTruncate = Enum.TextTruncate.None,
 							},
-							activated = function()
+							on_activated = function()
 								const old = table.clone(core.state.selected_outfits())
 								if selected() then
 									table.remove(old, table.find(old, key))
@@ -291,7 +303,7 @@ return function()
 			button {
 				layout = { LayoutOrder = 0 },
 				text = "Add outfit",
-				activated = function()
+				on_activated = function()
 					const files = StudioService:PromptImportFilesAsync { "json", "txt" }
 					for _, file: File in files do
 						const stripped = string.match(file.Name, "(.-)%..*")
@@ -313,9 +325,21 @@ return function()
 			},
 			button {
 				layout = { LayoutOrder = 1 },
-				text = "Add outfit (paste string)",
-				activated = function() end,
-				disabled = true,
+				text = "Add outfit (from string)",
+				on_activated = function()
+					const res = prompt_import_string_outfit()
+
+					res.and_then(function(value: prompt_string_outfit.OutfitImportResult)
+						const existing = outfits.state.outfits()[value.name]
+						if existing ~= nil then
+							alerts.actions.alert(
+								"warn",
+								`Unable to add outfit <b>{value.name}</b> since it already exists. Delete it first!`
+							)
+						end
+						outfits.actions.set_outfit(value.name, value.outfit)
+					end)
+				end,
 			},
 		},
 	}

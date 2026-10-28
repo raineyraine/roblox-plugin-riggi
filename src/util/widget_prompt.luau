@@ -1,5 +1,3 @@
---!strict
-
 export type PromptAppProps<T> = {
 	submit: (value: T) -> (),
 	cancel: () -> (),
@@ -12,46 +10,54 @@ export type PromptResult<T> = {
 	on_cancel: (callback: () -> ()) -> PromptResult<T>,
 }
 
-local store = require "@plugin/store"
-local plugin = store.state.plugin()
+const core = require "@plugin/store/core"
+const plugin = core.state.plugin()
 
-local vide = require "@pkgs/vide"
-local mount = vide.mount
-local cleanup = vide.cleanup
+const vide = require "@pkgs/vide"
+const mount = vide.mount
+const cleanup = vide.cleanup
 
-local function spawn_prompt_widget<T>(id: string, info: DockWidgetPluginGuiInfo, app: PromptApp<T>): PromptResult<T>
+const function spawn_prompt_widget<T>(
+	id: string,
+	info: DockWidgetPluginGuiInfo,
+	app: PromptApp<T>,
+	title: string?
+): PromptResult<T>
 	local andThenCallback: ((T) -> ())? = nil
 	local onCancelCallback: (() -> ())? = nil
 
 	local result: T? = nil
 	local cancelled = false
 
-	local to_return = {}
-	to_return = {
-		and_then = function(callback: (T) -> ())
-			if result then
-				callback(result)
-			else
-				andThenCallback = callback
-			end
+	const to_return: PromptResult<T> = {} :: any
 
-			return to_return
-		end,
-		on_cancel = function(callback: () -> ())
-			if cancelled then
-				callback()
-			else
-				onCancelCallback = callback
-			end
+	function to_return.and_then(callback: (T) -> ())
+		if result then
+			callback(result)
+		else
+			andThenCallback = callback
+		end
 
-			return to_return
-		end,
-	}
+		return to_return
+	end
+
+	function to_return.on_cancel(callback: () -> ())
+		if cancelled then
+			callback()
+		else
+			onCancelCallback = callback
+		end
+
+		return to_return
+	end
 
 	local unmount: () -> ()
 
 	local widget = plugin:CreateDockWidgetPluginGuiAsync(id, info)
 	widget.Enabled = true
+	if title then
+		widget.Title = title
+	end
 
 	local function submit(value: T)
 		unmount()

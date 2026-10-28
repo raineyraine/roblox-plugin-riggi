@@ -49,7 +49,7 @@ local function dropdown(props: DropdownProps)
 			return read(options)[read(selected)]
 		end,
 
-		activated = function()
+		on_activated = function()
 			enabled(not enabled())
 		end,
 
@@ -127,7 +127,7 @@ local function dropdown(props: DropdownProps)
 									_custom = "EmulatorDropDown",
 									_noborder = true,
 
-									activated = function()
+									on_activated = function()
 										enabled(false)
 										update_selected(key)
 									end,

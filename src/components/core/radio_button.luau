@@ -7,8 +7,8 @@ const changed = vide.changed
 const spring = vide.spring
 const read = vide.read
 
-local studio_types = require "@plugin/util/studio_types"
 const color = require "@plugin/util/studio_color"
+local studio_types = require "@plugin/util/studio_types"
 
 const background = require "./background"
 

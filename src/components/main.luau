@@ -1,5 +1,3 @@
---!strict
-
 const ChangeHistoryService = game:GetService "ChangeHistoryService"
 const HttpService = game:GetService "HttpService"
 const MaterialService = game:GetService "MaterialService"
@@ -15,20 +13,22 @@ const rig_cleaner = require "@plugin/libs/rig_cleaner"
 
 const background = require "./core/background"
 const button = require "./core/button"
-const padding = require "./core/padding"
+const dropdown = require "./core/dropdown"
 local foreground = require "./core/foreground"
+const loading_circle = require "./core/loading_circle"
+const padding = require "./core/padding"
+const row = require "./core/row"
 const scroll_frame = require "./core/scroll_frame"
 const text = require "./core/text"
-const dropdown = require "./core/dropdown"
-const row = require "./core/row"
-const loading_circle = require "./core/loading_circle"
 
+const alert_list = require "./alert_list"
 const outfit_list = require "./outfit_list"
-local alert_list = require "./alert_list"
+const prompt_string = require "./prompt_string"
 
-const core = require "@plugin/store/core"
 local alerts = require "@plugin/store/alerts"
+const core = require "@plugin/store/core"
 const outfits = require "@plugin/store/outfits"
+const widget_prompt = require "@plugin/util/widget_prompt"
 
 const assets = require "@assets"
 
@@ -36,10 +36,10 @@ const FOLDER_NAME = "riggi_plugin_loaded"
 
 const function import(
 	material: (Enum.Material | string)?,
-	useFolder: boolean,
-	noFix: boolean,
+	use_folder: boolean,
+	no_fix: boolean,
 	file: string?,
-	fileName: string?
+	file_name: string?
 )
 	if material == "Original" then
 		material = nil
@@ -47,7 +47,7 @@ const function import(
 	local folder = Workspace:FindFirstChild(FOLDER_NAME)
 	local offset = 0
 
-	if useFolder then
+	if use_folder then
 		if not folder then
 			folder = Instance.new "Folder"
 			folder.Name = FOLDER_NAME
@@ -57,9 +57,9 @@ const function import(
 		offset = #(folder :: Folder):GetChildren()
 	end
 
-	local origin = if Workspace.CurrentCamera and not useFolder then Workspace.CurrentCamera.CFrame else CFrame.new()
+	const origin = if Workspace.CurrentCamera and not use_folder then Workspace.CurrentCamera.CFrame else CFrame.new()
 
-	local files: { File | string } = if file
+	const files: { File | string } = if file
 		then { file }
 		else StudioService:PromptImportFilesAsync { "txt", "json" } :: any
 
@@ -75,30 +75,34 @@ const function import(
 			if not success then
 				alerts.actions.alert(
 					"error",
-					`Failed to load outfit <b>{fileName or (file :: any).Name}</b><br/>A full log is available in the Output window`
+					`Failed to load outfit <b>{file_name or (file :: any).Name}</b><br/>A full log is available in the Output window`
 				)
 
-				warn(`Failure loading outfit {fileName or (file :: any).Name}:\n{result}`)
+				warn(`Failure loading outfit {file_name or (file :: any).Name}:\n{result}`)
 				continue
 			end
 
 			decoded = result
 		end
 
-		local clone = assets.r6_rig:Clone()
+		const clone = assets.r6_rig:Clone()
 		clone:PivotTo(origin * CFrame.new(-5 * (i - 1 + offset), 0, 0))
 		const materialName = if typeof(material) == "EnumItem"
 			then material.Name
 			elseif typeof(material) == "string" then material
 			else "Original"
 
-		clone.Name = string.gsub(fileName or (file :: any).Name, "%.[^%.]+$", "") .. `({materialName})`
+		clone.Name = string.gsub(
+			file_name or if typeof(file) == "string" then file elseif file == nil then "Unknown" else file.Name,
+			"%.[^%.]+$",
+			""
+		) .. `({materialName})`
 
-		clone.Parent = if useFolder then folder else Workspace
+		clone.Parent = if use_folder then folder else Workspace
 
 		const success, message = pcall(function()
 			perdere_loader.load_to_rig(clone, decoded)
-			if not noFix then
+			if not no_fix then
 				rig_cleaner.clean_rig(clone, material)
 			end
 		end)
@@ -106,13 +110,23 @@ const function import(
 		if not success then
 			alerts.actions.alert(
 				"error",
-				`Failed to load outfit <b>{fileName or (file :: any).Name}</b><br/>A full log is available in the Output window`
+				`Failed to load outfit <b>{file_name or (file :: any).Name}</b><br/>A full log is available in the Output window`
 			)
 
-			warn(`Failure loading outfit {fileName or (file :: any).Name}:\n{message}`)
+			warn(`Failure loading outfit {file_name or (file :: any).Name}:\n{message}`)
 		end
 	end
 	ChangeHistoryService:SetWaypoint "loaded rigs"
+end
+
+const function prompt_import_string(): widget_prompt.PromptResult<string>
+	const info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, true, 500, 500, 500, 500)
+
+	return widget_prompt
+		.spawn_prompt_widget("prompt_import_str", info, prompt_string, "Import string")
+		.on_cancel(function()
+			alerts.actions.alert("warn", "String import cancelled")
+		end)
 end
 
 const materials: { string } = { "Original", "EntirelyBlankPlastic" }
@@ -124,15 +138,15 @@ for _, material in Enum.Material:GetEnumItems() do
 end
 
 return function(plugin: Plugin)
-	const selectedMaterialIndex = source(1)
-	const loadingAssets = source(false)
+	const selected_material_index = source(1)
+	const loading_assets = source(false)
 
-	const useFolder = source(false)
+	const use_folder = source(false)
 
-	const alertScrollRef = source(nil :: ScrollingFrame?)
+	const alert_scroll_ref = source(nil :: ScrollingFrame?)
 
 	effect(function()
-		const alertScroll = (alertScrollRef :: any)() :: ScrollingFrame?
+		const alertScroll = (alert_scroll_ref :: any)() :: ScrollingFrame?
 		if not alertScroll then
 			return
 		end
@@ -173,26 +187,24 @@ return function(plugin: Plugin)
 					},
 					button {
 						text = function(): string
-							return if loadingAssets()
+							return if loading_assets()
 								then "Loading characters.."
 								elseif #core.state.selected_outfits() == 0 then "Import files"
 								else "Import selected"
 						end,
-						primary = function()
-							return not loadingAssets()
-						end,
+						primary = true,
 						layout = {
-							LayoutOrder = 0,
+							LayoutOrder = 1,
 						},
-						disabled = loadingAssets,
-						activated = function()
-							loadingAssets(true)
+						disabled = loading_assets,
+						on_activated = function()
+							loading_assets(true)
 							const selected = core.state.selected_outfits()
 							if #selected == 0 then
 								import(
-									materials[vide.untrack(selectedMaterialIndex)],
+									materials[vide.untrack(selected_material_index)],
 									true,
-									vide.untrack(useFolder),
+									vide.untrack(use_folder),
 									nil,
 									nil
 								)
@@ -200,20 +212,43 @@ return function(plugin: Plugin)
 								for _, name in selected do
 									const outfit = outfits.state.outfits()[name]
 									import(
-										materials[vide.untrack(selectedMaterialIndex)],
+										materials[vide.untrack(selected_material_index)],
 										true,
-										vide.untrack(useFolder),
+										vide.untrack(use_folder),
 										outfit,
 										name
 									)
 								end
 							end
 
-							loadingAssets(false)
+							loading_assets(false)
 						end,
 					},
-					vide.show(loadingAssets, function()
-						return loading_circle {}
+					button {
+						text = "Import string",
+						layout = {
+							LayoutOrder = 1,
+						},
+						disabled = loading_assets,
+						on_activated = function()
+							const res = prompt_import_string()
+
+							res.and_then(function(value: string)
+								loading_assets(true)
+								import(
+									materials[vide.untrack(selected_material_index)],
+									true,
+									vide.untrack(use_folder),
+									value
+								)
+								loading_assets(false)
+							end)
+						end,
+					},
+					vide.show(loading_assets, function()
+						return loading_circle {
+							layout = { LayoutOrder = 2 },
+						}
 					end),
 				},
 
@@ -232,8 +267,8 @@ return function(plugin: Plugin)
 					},
 
 					dropdown {
-						selected = selectedMaterialIndex,
-						update_selected = selectedMaterialIndex,
+						selected = selected_material_index,
+						update_selected = selected_material_index,
 
 						options = materials,
 					},
@@ -245,7 +280,7 @@ return function(plugin: Plugin)
 							Size = UDim2.new(0, 0, 0, 24),
 							AutomaticSize = Enum.AutomaticSize.X,
 						},
-						activated = function()
+						on_activated = function()
 							const variant =
 								MaterialService:GetMaterialVariant(Enum.Material.Plastic, "EntirelyBlankPlastic")
 							if variant then

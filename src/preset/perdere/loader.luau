@@ -1,5 +1,5 @@
-const types = require "./types"
 const schema = require "./schema"
+const types = require "./types"
 
 export type JSONColor3 = types.JSONColor3
 export type JSONVector3 = types.JSONVector3
@@ -31,6 +31,7 @@ end
 local lib = {}
 
 function lib.load_to_rig(character: Model, data: PresetData)
+	print(data)
 	schema.presetDataSchema:assert(data)
 
 	-- type: will always be a Shirt, but luau cannot detect this

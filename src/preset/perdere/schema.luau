@@ -33,8 +33,8 @@ const accessoryDataSchema = gt.table {
 		Color = jsonColor3Schema,
 		Enabled = gt.boolean(),
 		Type = gt.string(),
-		Face = gt.string(),
-		Angle = gt.number(),
+		Face = gt.optional(gt.string()),
+		Angle = gt.optional(gt.number()),
 	}),
 
 	AttachmentName = gt.string(),

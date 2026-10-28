@@ -14,12 +14,12 @@ local changed = vide.changed
 local read = vide.read
 
 type Can<T> = T | () -> T
-type ButtonProps = {
+export type ButtonProps = {
 	primary: Can<boolean>?,
 	disabled: Can<boolean>?,
 	text: Can<string>,
 
-	activated: ((InputObject, number) -> ())?,
+	on_activated: ((InputObject, number) -> ())?,
 
 	layout: vide.Properties<TextButton>?,
 	layout_text: vide.Properties<TextLabel>?,
@@ -32,17 +32,19 @@ type ButtonProps = {
 	_nocorner: Can<boolean>?,
 }
 
-local function button(props: ButtonProps)
-	local primary = props.primary
-	local gui_state = source(Enum.GuiState.Idle)
-	local disabled = props.disabled or false
+-- TODO: better algorithm for disabbled colors
 
-	local no_padding = props._nopadding
-	local no_border = props._noborder
-	local no_corner = props._nocorner
-	local selected = props._selected
+const function button(props: ButtonProps)
+	const primary = props.primary
+	const gui_state = source(Enum.GuiState.Idle)
+	const disabled = props.disabled or false
 
-	local function modifier(): studio_types.StudioModifiers
+	const no_padding = props._nopadding
+	const no_border = props._noborder
+	const no_corner = props._nocorner
+	const selected = props._selected
+
+	const function modifier(): studio_types.StudioModifiers
 		return if gui_state() == Enum.GuiState.NonInteractable
 			then "Disabled"
 			elseif read(selected) then "Selected"
@@ -50,6 +52,17 @@ local function button(props: ButtonProps)
 			elseif gui_state() == Enum.GuiState.Hover then "Hover"
 			else "Default"
 	end
+
+	const button_color = color(props._custom or function()
+		return if read(primary) then "MainButton" else "Button"
+	end, modifier)
+
+	const border_color = color(
+		(function()
+			return if read(primary) then "MainButton" else "Border"
+		end) :: any,
+		"Pressed"
+	)
 
 	return create "TextButton" {
 
@@ -60,16 +73,24 @@ local function button(props: ButtonProps)
 			return not read(disabled)
 		end,
 
-		BackgroundColor3 = spring(
-			color(props._custom or function()
-				return if read(primary) then "MainButton" else "Button"
-			end, modifier),
-			1 / 12,
-			1
-		),
+		BackgroundColor3 = spring(function()
+			const color = button_color()
+			if not vide.read(disabled) then
+				return color
+			end
+
+			const h, s, v = color:ToHSV()
+			print(h, s, v)
+
+			return Color3.fromHSV(
+				h,
+				s * if s < 0.5 then s else s * 0.25,
+				v * if v < 0.5 then v + (1 - v) * 0.3 else v * 0.85
+			)
+		end, 1 / 12, 1),
 		AutoButtonColor = false,
 
-		Activated = props.activated,
+		Activated = props.on_activated,
 
 		create "UICorner" {
 			CornerRadius = function()
@@ -79,12 +100,20 @@ local function button(props: ButtonProps)
 
 		create "UIStroke" {
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-			Color = color(
-				(function()
-					return if read(primary) then "MainButton" else "Border"
-				end) :: any,
-				"Pressed"
-			),
+			Color = function()
+				const color = border_color()
+				if not vide.read(disabled) then
+					return color
+				end
+
+				const h, s, v = color:ToHSV()
+
+				return Color3.fromHSV(
+					h,
+					s * if s < 0.5 then s else s * 0.25,
+					v * if v < 0.5 then v + (1 - v) * 0.3 else v * 0.85
+				)
+			end,
 			Enabled = function()
 				return not read(no_border)
 			end,
@@ -93,7 +122,6 @@ local function button(props: ButtonProps)
 		container {
 
 			create "TextLabel" {
-
 				AutomaticSize = Enum.AutomaticSize.XY,
 				Position = UDim2.fromScale(0, 0.5),
 				AnchorPoint = Vector2.new(0, 0.5),
