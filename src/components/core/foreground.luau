@@ -1,7 +1,7 @@
 --from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/foreground.luau
 
-local color = require "@plugin/util/studio_color"
-local vide = require "@pkgs/vide"
+const color = require "@plugin/util/studio_color"
+const vide = require "@pkgs/vide"
 
 local create = vide.create
 

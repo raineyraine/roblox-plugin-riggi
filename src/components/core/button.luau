@@ -1,11 +1,11 @@
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/button.luau
 
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 
-local color = require "../../util/studio_color"
-local container = require "./container"
-local padding = require "./padding"
-local studio_types = require "../../util/studio_types"
+const color = require "../../util/studio_color"
+const container = require "./container"
+const padding = require "./padding"
+const studio_types = require "../../util/studio_types"
 
 local create = vide.create
 local source = vide.source

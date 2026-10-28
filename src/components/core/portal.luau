@@ -1,13 +1,13 @@
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/portal.luau
 
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local create = vide.create
 local source = vide.source
 local effect = vide.effect
 local cleanup = vide.cleanup
 local read = vide.read
 
-local ref = require "@plugin/util/ref"
+const ref = require "@plugin/util/ref"
 
 type Can<T> = T | () -> T
 type PortalProps = {

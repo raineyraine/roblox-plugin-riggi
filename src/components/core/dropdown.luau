@@ -2,7 +2,7 @@
 -- TODO: support strict
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/dropdown.luau
 
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local create = vide.create
 local source = vide.source
 local changed = vide.changed
@@ -10,13 +10,13 @@ local indexes = vide.indexes
 local spring = vide.spring
 local read = vide.read
 
-local button = require "./button"
-local color = require "@plugin/util/studio_color"
-local container = require "./container"
-local list = require "./list"
-local padding = require "./padding"
-local portal = require "./portal"
-local scroll_frame = require "./scroll_frame"
+const button = require "./button"
+const color = require "@plugin/util/studio_color"
+const container = require "./container"
+const list = require "./list"
+const padding = require "./padding"
+const portal = require "./portal"
+const scroll_frame = require "./scroll_frame"
 
 local MAX_SIZE = 100
 

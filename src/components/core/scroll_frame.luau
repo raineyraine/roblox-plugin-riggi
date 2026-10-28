@@ -1,9 +1,9 @@
 -- modified https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/scroll_frame.luau
 
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local create = vide.create
 
-local color = require "../../util/studio_color"
+const color = require "../../util/studio_color"
 
 type Can<T> = T | () -> T
 type ScrollFrameProps = vide.Properties<ScrollingFrame>

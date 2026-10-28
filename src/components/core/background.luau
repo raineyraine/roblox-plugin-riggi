@@ -1,7 +1,7 @@
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local create = vide.create
 
-local color = require "../../util/studio_color"
+const color = require "../../util/studio_color"
 
 export type BackgroundProps = vide.Properties<Frame>
 

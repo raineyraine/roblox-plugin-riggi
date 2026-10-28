@@ -1,6 +1,6 @@
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/padding.luau
 
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local create = vide.create
 
 type Can<T> = T | () -> T

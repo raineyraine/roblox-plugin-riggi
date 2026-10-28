@@ -1,11 +1,11 @@
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 
 const background = require "@plugin/components/core/background"
 const text_input = require "@plugin/components/core/text_input"
 
-local button = require "./core/button"
-local padding = require "./core/padding"
-local row = require "./core/row"
+const button = require "./core/button"
+const padding = require "./core/padding"
+const row = require "./core/row"
 const widget_prompt = require "@plugin/util/widget_prompt"
 
 return function(_: Plugin, props: widget_prompt.PromptAppProps<string>)

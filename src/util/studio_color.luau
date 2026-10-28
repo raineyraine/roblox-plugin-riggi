@@ -1,9 +1,9 @@
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local source = vide.source
 local read = vide.read
 
-local studio_types = require "./studio_types"
-local types = require "../types"
+const studio_types = require "./studio_types"
+const types = require "../types"
 
 local studio = settings():GetService "Studio"
 

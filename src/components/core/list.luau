@@ -1,9 +1,9 @@
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/list.luau
 
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local create = vide.create
 
-local container = require "./container"
+const container = require "./container"
 
 type can<T> = T | () -> T
 type layout = {

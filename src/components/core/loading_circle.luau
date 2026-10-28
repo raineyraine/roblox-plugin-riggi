@@ -1,7 +1,7 @@
 local RunService = game:GetService "RunService"
 
-local color = require "@plugin/util/studio_color"
-local vide = require "@pkgs/vide"
+const color = require "@plugin/util/studio_color"
+const vide = require "@pkgs/vide"
 const read = vide.read
 local create = vide.create
 local source = vide.source

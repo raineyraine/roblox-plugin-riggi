@@ -1,4 +1,4 @@
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 
 local function ref(value: (Instance) -> ())
 	return vide.action(value)

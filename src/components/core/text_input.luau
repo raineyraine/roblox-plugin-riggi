@@ -1,14 +1,14 @@
 -- from https://github.com/alicesaidhi/videkit_ty/blob/main/src/components/text_input.luau
 
-local vide = require "@pkgs/vide"
+const vide = require "@pkgs/vide"
 local create = vide.create
 local source = vide.source
 local changed = vide.changed
 local spring = vide.spring
 local read = vide.read
 
-local color = require "@plugin/util/studio_color"
-local padding = require "./padding"
+const color = require "@plugin/util/studio_color"
+const padding = require "./padding"
 
 type Can<T> = T | () -> T
 type TextInputProps = {
