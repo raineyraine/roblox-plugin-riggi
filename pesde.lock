@@ -16,13 +16,13 @@ frktest = [{ name = "itsfrank/frktest", version = "^0.0.4", index = "https://git
 luau-lsp = [{ name = "pesde/luau_lsp", version = "=1.66.1", index = "https://github.com/pesde-pkg/index", target = "lune" }, "dev"]
 stylua = [{ name = "pesde/stylua", version = "=2.4.1", index = "https://github.com/pesde-pkg/index", target = "lune" }, "dev"]
 
-[graph."centau/vide@0.0.0-8890f5044158a71592249e2d91646715b98ca4aa roblox"]
-direct = ["vide", { repo = "https://github.com/centau/vide", rev = "0.4.1" }, "standard"]
+[graph."centau/vide@0.0.0-9c7a226002e9303850770fa6e27a43fb6947031f roblox"]
+direct = ["vide", { repo = "https://github.com/centau/vide", rev = "62d6750b2eb59a9e96c9b2be70fe9059656b123a" }, "standard"]
 
-[graph."centau/vide@0.0.0-8890f5044158a71592249e2d91646715b98ca4aa roblox".pkg_ref]
+[graph."centau/vide@0.0.0-9c7a226002e9303850770fa6e27a43fb6947031f roblox".pkg_ref]
 ref_ty = "git"
 repo = "https://github.com/centau/vide"
-tree_id = "8890f5044158a71592249e2d91646715b98ca4aa"
+tree_id = "9c7a226002e9303850770fa6e27a43fb6947031f"
 new_structure = true
 
 [graph."corecii/greentea@0.4.11 roblox"]
